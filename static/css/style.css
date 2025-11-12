@@ -1,5 +1,31 @@
+/* --- GLOBAL STYLES & STATE MANAGEMENT --- */
+body {
+  /* Prevent horizontal scrollbar when content is pushed */
+  overflow-x: hidden;
+}
+
+/* Lock body scroll when modal or drawer is open */
+body.modal-is-open,
+body.drawer-is-open {
+  overflow: hidden;
+}
+
+/* --- MODAL ANIMATIONS --- */
 @keyframes fadeIn { from { opacity: 0; transform: scale(.98); } to { opacity: 1; transform: scale(1); } }
 @keyframes fadeOut { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(.98); } }
 .animate-fade-in { animation: fadeIn 180ms ease-out forwards; }
 .animate-fade-out { animation: fadeOut 160ms ease-in forwards; }
 .focus-ring:focus { outline: 3px solid rgba(99,102,241,0.18); outline-offset: 2px; }
+
+/* --- DRAWER ANIMATIONS --- */
+@keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@keyframes slideOutRight { from { transform: translateX(0); } to { transform: translateX(100%); } }
+.animate-slide-in-right { animation: slideInRight 300ms cubic-bezier(0, 0, 0.2, 1) forwards; }
+.animate-slide-out-right { animation: slideOutRight 300ms cubic-bezier(0.4, 0, 1, 1) forwards; }
+
+
+/* --- FLUID FONT SIZE FOR HEADLINE --- */
+.font-fluid-headline {
+  /* Min size: 1.875rem, Preferred size: scales with viewport, Max size: 3rem */
+  font-size: clamp(1.875rem, 1rem + 3vw, 3rem);
+}
