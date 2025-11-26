@@ -27,6 +27,11 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:8000",
         "http://127.0.0.1:8000",
+        "http://localhost:5500",  # VS Code Live Server
+        "http://127.0.0.1:5500",
+        "http://localhost:63342", # PyCharm Default
+        "http://localhost:63343", # PyCharm Alternative
+        "null",  # Allow file:// protocol for development
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -36,6 +41,19 @@ app.add_middleware(
 # Initialize analyzers
 analyzer = ComplexityAnalyzer()
 feedback_gen = FeedbackGenerator()
+
+# Database setup
+from config.database import engine, Base
+from models.user import User
+from models.user import User
+from models.password_reset import PasswordReset
+from models.cognitive import CognitiveHistory
+Base.metadata.create_all(bind=engine)
+
+# Import and include auth router
+from api.routes import auth, cognitive
+app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
+app.include_router(cognitive.router, prefix="/api/cognitive", tags=["cognitive"])
 
 # Pydantic models
 class CodeSubmission(BaseModel):
@@ -140,7 +158,7 @@ async def get_analysis(submission_id: str):
 
 if __name__ == "__main__":
     import uvicorn
-    print("🚀 Starting BeatCoders API server...")
-    print("📚 API Documentation: http://localhost:8001/docs")
-    print("❤️  Health Check: http://localhost:8001/health")
+    print("Starting BeatCoders API server...")
+    print("API Documentation: http://localhost:8001/docs")
+    print("Health Check: http://localhost:8001/health")
     uvicorn.run(app, host="0.0.0.0", port=8001)

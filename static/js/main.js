@@ -8,6 +8,16 @@ document.addEventListener('DOMContentLoaded', () => {
     startCodingDelay: 150
   };
 
+  // --- MONACO EDITOR & COGNITIVE OBSERVER ---
+  let editorInstance = null;
+  const cognitiveObserver = new window.CognitiveObserver();
+  const cognitiveReplay = new window.CognitiveReplay('cognitive-chart');
+
+  // Configure Monaco Loader
+  if (window.require) {
+    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' } });
+  }
+
   // --- THEME TOGGLE ---
   const themeToggle = document.getElementById('theme-toggle');
 
@@ -46,6 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const successView = document.getElementById('success-view');
   const forgotPasswordView = document.getElementById('forgot-password-view');
   const resetSentView = document.getElementById('reset-sent-view');
+  const verifyEmailView = document.getElementById('verify-email-view');
+  const resetPasswordView = document.getElementById('reset-password-view');
 
   const showCreateAccountBtn = document.getElementById('show-create-account-btn');
   const showSignInBtn = document.getElementById('show-sign-in-btn');
@@ -54,11 +66,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const backToChoiceFromSignInBtn = document.getElementById('back-to-choice-from-signin-btn');
   const backToSignInFromForgotBtn = document.getElementById('back-to-signin-from-forgot-btn');
   const backToSignInFromSentBtn = document.getElementById('back-to-signin-from-sent-btn');
+  const backToSignInFromVerifyBtn = document.getElementById('back-to-signin-from-verify-btn');
+  const backToSignInFromResetBtn = document.getElementById('back-to-signin-from-reset-btn');
+  const resendCodeBtn = document.getElementById('resend-code-btn');
   const closeSuccessBtn = document.getElementById('close-success-btn');
 
   const createAccountForm = document.getElementById('create-account-form');
   const signInForm = document.getElementById('sign-in-form');
   const forgotPasswordForm = document.getElementById('forgot-password-form');
+  const verifyEmailForm = document.getElementById('verify-email-form');
+  const resetPasswordForm = document.getElementById('reset-password-form');
   const emailInput = document.getElementById('email');
   const signInEmailInput = document.getElementById('signin-email');
   const passwordInput = document.getElementById('password');
@@ -81,7 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- MODAL VIEW MANAGEMENT ---
   const ALL_MODAL_VIEWS = [
     authChoiceView, createAccountView, signInView,
-    successView, forgotPasswordView, resetSentView
+    successView, forgotPasswordView, resetSentView,
+    verifyEmailView, resetPasswordView
   ];
 
   const showModalView = (viewToShow) => {
@@ -118,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // reset modal view & forms
       showModalView(authChoiceView);
-      [createAccountForm, signInForm, forgotPasswordForm].forEach(f => f?.reset());
+      [createAccountForm, signInForm, forgotPasswordForm, verifyEmailForm, resetPasswordForm].forEach(f => f?.reset());
       [emailError, passwordError, confirmPasswordError].forEach(el => { if (el) el.textContent = ''; });
       [reqLength, reqNumber].forEach(el => {
         if (el) {
@@ -136,6 +154,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
   if (modalOverlay) modalOverlay.addEventListener('click', closeModal);
   if (closeSuccessBtn) closeSuccessBtn.addEventListener('click', () => {
+
+
     window.location.href = 'dashboard.html';
   });
 
@@ -146,6 +166,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (backToChoiceFromSignInBtn) backToChoiceFromSignInBtn.addEventListener('click', () => showModalView(authChoiceView));
   if (backToSignInFromForgotBtn) backToSignInFromForgotBtn.addEventListener('click', () => showModalView(signInView));
   if (backToSignInFromSentBtn) backToSignInFromSentBtn.addEventListener('click', () => showModalView(signInView));
+  if (backToSignInFromVerifyBtn) backToSignInFromVerifyBtn.addEventListener('click', () => showModalView(signInView));
+  if (backToSignInFromResetBtn) backToSignInFromResetBtn.addEventListener('click', () => showModalView(signInView));
 
   if (openDrawerBtn) openDrawerBtn.addEventListener('click', () => {
     drawerContainer.classList.remove('hidden');
@@ -237,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (confirmPasswordInput) confirmPasswordInput.addEventListener('input', validateConfirmPassword);
 
   if (createAccountForm) {
-    createAccountForm.addEventListener('submit', (e) => {
+    createAccountForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const isEmailValid = validateEmail();
       const isPasswordValid = validatePassword();
@@ -247,42 +269,274 @@ document.addEventListener('DOMContentLoaded', () => {
       else if (passwordError) passwordError.textContent = '';
 
       if (isEmailValid && isPasswordValid && isConfirmPasswordValid) {
-        const userID = `Coder${Math.floor(1000 + Math.random() * 9000)}`;
-        const emailName = emailInput.value.split('@')[0];
-        const realName = emailName.charAt(0).toUpperCase() + emailName.slice(1);
+        const submitBtn = createAccountForm.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Creating Account...';
 
-        localStorage.setItem('beatCodersUserID', userID);
-        localStorage.setItem('beatCodersRealName', realName);
-        localStorage.setItem('beatCodersEmail', emailInput.value);
-        localStorage.removeItem('beatCodersUserSettings');
+        try {
+          const response = await fetch('http://localhost:8001/api/auth/register', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: emailInput.value,
+              password: passwordInput.value
+            })
+          });
 
-        const newUsernameEl = document.getElementById('new-username');
-        if (newUsernameEl) newUsernameEl.textContent = userID;
+          if (response.ok) {
+            const data = await response.json();
+            const userID = data.user_id;
 
-        showModalView(successView);
+            localStorage.setItem('beatCodersUserID', userID);
+            localStorage.setItem('beatCodersEmail', data.email);
+            localStorage.setItem('beatCodersUsername', data.username);
+            localStorage.removeItem('beatCodersUserSettings');
+
+            const newUsernameEl = document.getElementById('new-username');
+            if (newUsernameEl) newUsernameEl.textContent = userID;
+
+            // Store email for verification
+            localStorage.setItem('pendingVerificationEmail', data.email);
+            showModalView(verifyEmailView);
+          } else {
+            const errorData = await response.json();
+            if (emailError) emailError.textContent = errorData.detail || 'Registration failed.';
+          }
+        } catch (error) {
+          console.error('Registration error:', error);
+          if (emailError) emailError.textContent = 'Network error. Please try again.';
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalBtnText;
+        }
       }
     });
   }
 
   if (signInForm) {
-    signInForm.addEventListener('submit', (e) => {
+    signInForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      let userID = 'Coder';
-      if (signInEmailInput && signInEmailInput.value) {
-        const emailValue = signInEmailInput.value;
-        const emailName = emailValue.split('@')[0];
-        userID = emailName.charAt(0).toUpperCase() + emailName.slice(1);
-        localStorage.setItem('beatCodersEmail', emailValue);
+
+      const submitBtn = signInForm.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Signing In...';
+
+      // Clear previous errors (if any element exists for general errors, otherwise use alert or console for now)
+      // Ideally add a general error element to the form in HTML, but for now we can use alert or just log
+
+      try {
+        const response = await fetch('http://localhost:8001/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: signInEmailInput.value,
+            password: document.getElementById('signin-password').value
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          localStorage.setItem('beatCodersUserID', data.user_id);
+          localStorage.setItem('beatCodersEmail', data.email);
+          localStorage.setItem('beatCodersUsername', data.username);
+          window.location.href = 'dashboard.html';
+        } else {
+          const errorData = await response.json();
+          if (response.status === 404) {
+            alert('Account not found');
+          } else {
+            const errorData = await response.json();
+            if (response.status === 403) {
+              alert('Email not verified. Please verify your email.');
+              localStorage.setItem('pendingVerificationEmail', signInEmailInput.value);
+              showModalView(verifyEmailView);
+            } else if (response.status === 404) {
+              alert('Account not found');
+            } else {
+              alert(errorData.detail || 'Login failed');
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Login error:', error);
+        alert('Network error. Please try again.');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalBtnText;
       }
-      localStorage.setItem('beatCodersUserID', userID);
-      window.location.href = 'dashboard.html';
     });
   }
 
   if (forgotPasswordForm) {
-    forgotPasswordForm.addEventListener('submit', (e) => {
+    forgotPasswordForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      showModalView(resetSentView);
+      const email = document.getElementById('forgot-email').value;
+      const submitBtn = forgotPasswordForm.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+
+      try {
+        const response = await fetch('http://localhost:8001/api/auth/forgot-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email })
+        });
+
+        if (response.ok) {
+          console.log('Forgot password response OK');
+          localStorage.setItem('pendingResetEmail', email);
+
+          if (!resetPasswordView) {
+            console.error('CRITICAL: resetPasswordView element not found!');
+            alert('Error: Could not load reset password view. Please reload the page.');
+            return;
+          }
+
+          console.log('Showing resetPasswordView');
+          showModalView(resetPasswordView);
+          alert('Reset code sent to your email.');
+        } else {
+          const data = await response.json();
+          alert(data.detail || 'Failed to send reset email.');
+        }
+      } catch (error) {
+        console.error('Forgot password error:', error);
+        alert('Network error.');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalBtnText;
+      }
+    });
+  }
+
+  if (verifyEmailForm) {
+    verifyEmailForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const code = document.getElementById('verification-code').value;
+      const email = localStorage.getItem('pendingVerificationEmail');
+
+      if (!email) {
+        alert('No email found to verify. Please sign in again.');
+        showModalView(signInView);
+        return;
+      }
+
+      const submitBtn = verifyEmailForm.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Verifying...';
+
+      try {
+        const response = await fetch('http://localhost:8001/api/auth/verify-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email, code: code })
+        });
+
+        if (response.ok) {
+          alert('Email verified successfully! Please sign in.');
+          showModalView(signInView);
+        } else {
+          const data = await response.json();
+          alert(data.detail || 'Verification failed.');
+        }
+      } catch (error) {
+        console.error('Verification error:', error);
+        alert('Network error.');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalBtnText;
+      }
+    });
+  }
+
+  if (resendCodeBtn) {
+    resendCodeBtn.addEventListener('click', async () => {
+      const email = localStorage.getItem('pendingVerificationEmail');
+      if (!email) return;
+
+      resendCodeBtn.disabled = true;
+      resendCodeBtn.textContent = 'Sending...';
+
+      try {
+        const response = await fetch('http://localhost:8001/api/auth/resend-verification', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email })
+        });
+
+        if (response.ok) {
+          alert('Verification code resent!');
+        } else {
+          const data = await response.json();
+          alert(data.detail || 'Failed to resend code.');
+        }
+      } catch (error) {
+        console.error('Resend error:', error);
+        alert('Network error.');
+      } finally {
+        resendCodeBtn.disabled = false;
+        resendCodeBtn.textContent = 'Resend Code';
+      }
+    });
+  }
+
+  if (resetPasswordForm) {
+    resetPasswordForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const code = document.getElementById('reset-code').value;
+      const newPassword = document.getElementById('new-password').value;
+      const confirmNewPassword = document.getElementById('confirm-new-password').value;
+      const email = localStorage.getItem('pendingResetEmail');
+
+      if (newPassword !== confirmNewPassword) {
+        alert('Passwords do not match.');
+        return;
+      }
+
+      if (!email) {
+        alert('Session expired. Please try forgot password again.');
+        showModalView(forgotPasswordView);
+        return;
+      }
+
+      const submitBtn = resetPasswordForm.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Resetting...';
+
+      try {
+        const response = await fetch('http://localhost:8001/api/auth/reset-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: email,
+            code: code,
+            new_password: newPassword
+          })
+        });
+
+        if (response.ok) {
+          alert('Password reset successfully! Please sign in with your new password.');
+          showModalView(signInView);
+        } else {
+          const data = await response.json();
+          alert(data.detail || 'Password reset failed.');
+        }
+      } catch (error) {
+        console.error('Reset password error:', error);
+        alert('Network error.');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalBtnText;
+      }
     });
   }
 
@@ -419,11 +673,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('modal-problem-topic').textContent = problem.topic;
 
-    // Reset editor
-    codeEditor.value = '';
-    feedbackSection.style.display = 'none';
+    document.getElementById('modal-problem-topic').textContent = problem.topic;
+
+    // Initialize or Update Monaco Editor
     codeEditorModal.classList.add('active');
     document.body.style.overflow = 'hidden'; // Prevent background scrolling
+
+    if (window.require) {
+      require(['vs/editor/editor.main'], function () {
+        if (!editorInstance) {
+          editorInstance = monaco.editor.create(document.getElementById('code-editor-container'), {
+            value: '',
+            language: 'python',
+            theme: 'vs-dark',
+            automaticLayout: true,
+            minimap: { enabled: false },
+            fontSize: 14
+          });
+
+          // Attach Cognitive Observer
+          cognitiveObserver.attach(editorInstance, `practice_${problemTitle.replace(/\s+/g, '_')}`);
+        }
+
+        editorInstance.setValue(''); // Clear previous code
+        // Update theme based on current app theme
+        const isDark = document.documentElement.classList.contains('dark');
+        monaco.editor.setTheme(isDark ? 'vs-dark' : 'vs');
+      });
+    } else {
+      // Fallback to textarea if Monaco fails to load
+      document.getElementById('code-editor').style.display = 'block';
+      document.getElementById('code-editor-container').style.display = 'none';
+      codeEditor.value = '';
+    }
+
+    feedbackSection.style.display = 'none';
   }
 
   function closeCodeEditor() {
@@ -460,7 +744,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // Submit Code Logic
   if (submitCodeBtn) {
     submitCodeBtn.addEventListener('click', async () => {
-      const code = codeEditor.value;
+      let code = '';
+      if (editorInstance) {
+        code = editorInstance.getValue();
+        // Flush cognitive signals on submit
+        cognitiveObserver.flush();
+      } else {
+        code = codeEditor.value;
+      }
       const language = 'python'; // Default to Python
       const problemTitle = document.getElementById('modal-problem-title').textContent;
       const problemId = problemTitle.toLowerCase().replace(/\s+/g, '-');
@@ -502,6 +793,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 3. Display Feedback
         displayFeedback(analysis);
+
+        // 4. Load Cognitive Analysis
+        document.getElementById('cognitive-analysis-section').style.display = 'block';
+        // Use the task ID we generated for the observer
+        const taskId = cognitiveObserver.taskId;
+        // Wait a moment for the flush to complete
+        setTimeout(() => {
+          cognitiveReplay.loadAndRender(taskId);
+        }, 1000);
 
       } catch (error) {
         console.error('Error:', error);
