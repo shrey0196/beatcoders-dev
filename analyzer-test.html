@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Analyzer Test - BeatCoders</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 15px;
+        }
+
+        textarea {
+            min-height: 200px;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .result.optimal {
+            background: #d4edda;
+            border: 2px solid #28a745;
+        }
+
+        .result.good {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+        }
+
+        .result.improvable {
+            background: #ffe5d0;
+            border: 2px solid #ff9800;
+        }
+
+        .result.uncertain {
+            background: #d1ecf1;
+            border: 2px solid #17a2b8;
+        }
+
+        .result-header {
+            font-size: 24px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .complexity-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .complexity-info div {
+            margin: 8px 0;
+        }
+
+        .hints {
+            margin-top: 15px;
+        }
+
+        .hint-item {
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 5px;
+            margin: 8px 0;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .example-btn {
+            padding: 10px;
+            background: #f0f0f0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .example-btn:hover {
+            background: #e0e0e0;
+            border-color: #667eea;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🚀 Code Efficiency Analyzer</h1>
+
+        <div class="card">
+            <h2>Submit Your Code</h2>
+
+            <label for="problem">Problem:</label>
+            <select id="problem">
+                <option value="two-sum">Two Sum</option>
+                <option value="default">Other Problem</option>
+            </select>
+
+            <label for="language">Language:</label>
+            <select id="language">
+                <option value="python">Python</option>
+                <option value="javascript">JavaScript</option>
+            </select>
+
+            <label for="code">Your Code:</label>
+            <textarea id="code" placeholder="Paste your code here..."></textarea>
+
+            <div class="examples">
+                <button class="example-btn" onclick="loadExample('optimal')">
+                    ✅ Optimal Example (Hash Map)
+                </button>
+                <button class="example-btn" onclick="loadExample('suboptimal')">
+                    💡 Suboptimal Example (Nested Loops)
+                </button>
+            </div>
+
+            <br>
+            <button id="analyzeBtn" onclick="analyzeCode()">Analyze Code</button>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Analyzing your code...</p>
+            </div>
+        </div>
+
+        <div class="card result" id="result">
+            <div class="result-header" id="resultHeader"></div>
+            <div id="resultMessage"></div>
+
+            <div class="complexity-info">
+                <div><strong>Time Complexity:</strong> <span id="timeComplexity"></span></div>
+                <div><strong>Space Complexity:</strong> <span id="spaceComplexity"></span></div>
+                <div><strong>Patterns Detected:</strong> <span id="patterns"></span></div>
+            </div>
+
+            <div class="hints" id="hintsSection" style="display: none;">
+                <h3>💡 Hints:</h3>
+                <div id="hints"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8001';
+
+        const examples = {
+            optimal: `def two_sum(nums, target):
+    seen = {}
+    for i, num in enumerate(nums):
+        complement = target - num
+        if complement in seen:
+            return [seen[complement], i]
+        seen[num] = i
+    return []`,
+            suboptimal: `def two_sum(nums, target):
+    for i in range(len(nums)):
+        for j in range(i + 1, len(nums)):
+            if nums[i] + nums[j] == target:
+                return [i, j]
+    return []`
+        };
+
+        function loadExample(type) {
+            document.getElementById('code').value = examples[type];
+        }
+
+        async function analyzeCode() {
+            const code = document.getElementById('code').value;
+            const problem = document.getElementById('problem').value;
+            const language = document.getElementById('language').value;
+
+            if (!code.trim()) {
+                alert('Please enter some code to analyze!');
+                return;
+            }
+
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('analyzeBtn').disabled = true;
+
+            try {
+                // Submit code
+                const submitResponse = await fetch(`${API_URL}/api/submissions/submit`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        problem_id: problem,
+                        code: code,
+                        language: language,
+                        user_tier: 'free'
+                    })
+                });
+
+                if (!submitResponse.ok) {
+                    throw new Error('Submission failed');
+                }
+
+                const submitData = await submitResponse.json();
+                const submissionId = submitData.submission_id;
+
+                // Get analysis
+                const analysisResponse = await fetch(`${API_URL}/api/submissions/analysis/${submissionId}`);
+
+                if (!analysisResponse.ok) {
+                    throw new Error('Analysis retrieval failed');
+                }
+
+                const analysis = await analysisResponse.json();
+
+                // Display results
+                displayResults(analysis);
+
+            } catch (error) {
+                alert('Error: ' + error.message);
+                console.error(error);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('analyzeBtn').disabled = false;
+            }
+        }
+
+        function displayResults(analysis) {
+            const resultDiv = document.getElementById('result');
+
+            // Set tier class
+            resultDiv.className = 'card result ' + analysis.feedback_tier;
+            resultDiv.style.display = 'block';
+
+            // Set header
+            document.getElementById('resultHeader').textContent =
+                `${analysis.feedback_icon} ${analysis.feedback_title}`;
+
+            // Set message
+            document.getElementById('resultMessage').textContent = analysis.feedback_message;
+
+            // Set complexity info
+            document.getElementById('timeComplexity').textContent = analysis.time_complexity;
+            document.getElementById('spaceComplexity').textContent = analysis.space_complexity;
+            document.getElementById('patterns').textContent = analysis.patterns_detected.join(', ') || 'None detected';
+
+            // Set hints
+            if (analysis.hints && analysis.hints.length > 0) {
+                document.getElementById('hintsSection').style.display = 'block';
+                document.getElementById('hints').innerHTML = analysis.hints
+                    .map(hint => `<div class="hint-item">${hint}</div>`)
+                    .join('');
+            } else {
+                document.getElementById('hintsSection').style.display = 'none';
+            }
+
+            // Scroll to results
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    </script>
+</body>
+
+</html>

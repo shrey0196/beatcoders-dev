@@ -1,0 +1,26 @@
+<!-- 
+  PHASE 3 INTEGRATION SNIPPET
+  Add these script tags to dashboard.html BEFORE main.js
+-->
+
+<!-- Mermaid.js for flowchart visualization -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+<!-- Phase 3: Adaptive IDE modules -->
+<script src="static/js/cognitive/AdaptiveIDE.js"></script>
+<script src="static/js/cognitive/VisualDebugger.js"></script>
+
+<!--
+  LOCATION: Add these lines in dashboard.html around line 2956-2959
+  BEFORE: <script src="static/js/main.js"></script>
+  
+  The final script order should be:
+  1. Chart.js
+  2. Mermaid.js (NEW)
+  3. Monaco Editor
+  4. CognitiveObserver.js
+  5. CognitiveReplay.js
+  6. AdaptiveIDE.js (NEW)
+  7. VisualDebugger.js (NEW)
+  8. main.js
+-->
