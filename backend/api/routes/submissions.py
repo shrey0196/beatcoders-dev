@@ -44,6 +44,7 @@ class AnalysisResult(BaseModel):
     patterns_detected: List[str]
     execution_time_ms: Optional[float] = None
     show_celebration: bool = False
+    points: int = 0
     # Test execution results
     tests_passed: int = 0
     tests_total: int = 0
@@ -179,6 +180,13 @@ async def analyze_submission(submission_id: str, code: str, language: str, probl
         analysis = analyzer.analyze(code, language)
         feedback = feedback_gen.generate_feedback(analysis, problem_id, user_tier)
         
+        # Calculate points
+        points = 50 # Base points
+        if feedback.tier == "optimal":
+            points = 100
+        elif feedback.tier == "good":
+            points = 80
+        
         return AnalysisResult(
             submission_id=submission_id,
             time_complexity=analysis.time_complexity,
@@ -192,6 +200,7 @@ async def analyze_submission(submission_id: str, code: str, language: str, probl
             patterns_detected=analysis.patterns,
             execution_time_ms=sum(tr.execution_time_ms for tr in execution_result.test_results) / len(execution_result.test_results),
             show_celebration=feedback.show_celebration,
+            points=points,
             tests_passed=execution_result.tests_passed,
             tests_total=execution_result.tests_total,
             test_results=test_results_api

@@ -2,8 +2,18 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
 import sys
-from io import StringIO
+import io
 import traceback
+from contextlib import redirect_stdout, redirect_stderr
+from test_cases.hidden_tests import get_hidden_tests
+# Import analyzers
+from analyzers.complexity_analyzer import ComplexityAnalyzer
+from analyzers.feedback_generator import FeedbackGenerator
+# DB Imports
+from fastapi import Depends
+from sqlalchemy.orm import Session
+from config.database import get_db
+from models.user import User
 
 router = APIRouter()
 
@@ -45,6 +55,17 @@ class SubmitCodeResponse(BaseModel):
     results: List[TestResult]
     runtime: str
     memory: str
+    # Performance Stats
+    runtimePercentile: Optional[float] = None
+    memoryPercentile: Optional[float] = None
+    # Analysis Fields
+    points: int = 50
+    timeComplexity: str = "N/A"
+    spaceComplexity: str = "N/A"
+    feedback_tier: str = "improvable"
+    is_optimal: bool = False
+
+
 
 def execute_python_code(code: str, test_case: Dict) -> tuple:
     """
@@ -57,7 +78,7 @@ def execute_python_code(code: str, test_case: Dict) -> tuple:
         
         # Capture stdout
         old_stdout = sys.stdout
-        sys.stdout = StringIO()
+        sys.stdout = io.StringIO()
         
         try:
             # Execute the user's code to define the function
@@ -145,7 +166,7 @@ async def run_code(request: RunCodeRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/api/submit-code", response_model=SubmitCodeResponse)
-async def submit_code(request: SubmitCodeRequest):
+async def submit_code(request: SubmitCodeRequest, db: Session = Depends(get_db)):
     """
     Execute code against all test cases (visible + hidden)
     """
@@ -156,19 +177,12 @@ async def submit_code(request: SubmitCodeRequest):
         if request.language != 'python':
             raise HTTPException(status_code=400, detail="Only Python is supported currently")
         
-        # Mock hidden test cases (in production, fetch from DB)
-        hidden_test_cases = []
-        
-        if request.problemId == 'Two Sum':
-            hidden_test_cases = [
-                {"input": {"nums": [0, 4, 3, 0], "target": 0}, "output": [0, 3]},
-                {"input": {"nums": [-1, -2, -3, -4, -5], "target": -8}, "output": [2, 4]}
-            ]
-        elif request.problemId == 'Valid Anagram':
-            hidden_test_cases = [
-                {"input": {"s": "listen", "t": "silent"}, "output": True},
-                {"input": {"s": "hello", "t": "world"}, "output": False}
-            ]
+        # Get hidden test cases from centralized module
+        hidden_test_cases_raw = get_hidden_tests(request.problemId)
+        hidden_test_cases = [
+            {"input": tc["input"], "output": tc["output"]}
+            for tc in hidden_test_cases_raw
+        ]
         
         # Combine all test cases
         visible_test_cases = [{"input": tc.input, "output": tc.output} for tc in request.testCases]
@@ -192,14 +206,62 @@ async def submit_code(request: SubmitCodeRequest):
         all_passed = all(r.passed for r in results)
         passed_count = sum(1 for r in results if r.passed)
         
+        # Run Code Analysis
+        analyzer = ComplexityAnalyzer()
+        feedback_gen = FeedbackGenerator()
+        
+        # Analysis Variables
+        points = 50
+        time_comp = "N/A"
+        space_comp = "N/A"
+        tier = "improvable"
+        is_optimal = False
+        
+        try:
+            analysis = analyzer.analyze(request.code, request.language)
+            feedback = feedback_gen.generate_feedback(analysis, request.problemId, "free")
+            
+            # Points Logic
+            if feedback.tier == "optimal":
+                points = 100
+            elif feedback.tier == "good":
+                points = 80
+                
+            time_comp = analysis.time_complexity
+            space_comp = analysis.space_complexity
+            tier = feedback.tier
+            is_optimal = (tier == "optimal")
+            
+        except Exception as e:
+            print(f"Analysis failed: {e}")
+        
+        # Mock Performance Metrics
+        import random
+        runtime_ms = random.randint(30, 100)
+        memory_mb = round(random.uniform(10.0, 20.0), 1)
+        
+        runtime_beats = 0.0
+        memory_beats = 0.0
+        
+        if all_passed:
+            runtime_beats = round(random.uniform(40.0, 99.0), 2)
+            memory_beats = round(random.uniform(40.0, 99.0), 2)
+
         return SubmitCodeResponse(
             success=True,
             allPassed=all_passed,
             passedCount=passed_count,
             totalCount=len(results),
             results=results,
-            runtime='42ms',  # Mock data
-            memory='14.2MB'  # Mock data
+            runtime=f"{runtime_ms}ms",
+            memory=f"{memory_mb}MB",
+            runtimePercentile=runtime_beats,
+            memoryPercentile=memory_beats,
+            points=points,
+            timeComplexity=time_comp,
+            spaceComplexity=space_comp,
+            feedback_tier=tier,
+            is_optimal=is_optimal
         )
         
     except HTTPException:

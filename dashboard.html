@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="static/css/style.css?v=4">
   <style>
     :root {
       --bg1: #071024;
@@ -322,7 +323,7 @@
       font-weight: 600;
     }
 
-    }
+
 
     .avatar-wrap {
       position: relative;
@@ -1596,7 +1597,7 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      
+
       background-color: #000000;
       /* Enforce Dark Mode Variables Locally */
       --text-primary: #e5e7eb;
@@ -1607,7 +1608,7 @@
       --border-color: rgba(255, 255, 255, 0.1);
       --accent1: #4ea8ff;
       --accent2: #a855f7;
-        
+
       /* Force Black */
       color: #e8f0ff;
       /* Force Light Text */
@@ -1786,18 +1787,17 @@
       content: '';
       flex: 1;
       height: 1px;
-      background: repeating-linear-gradient(
-        90deg,
-        var(--accent2),
-        var(--accent2) 2px,
-        transparent 2px,
-        transparent 8px
-      );
+      background: repeating-linear-gradient(90deg,
+          var(--accent2),
+          var(--accent2) 2px,
+          transparent 2px,
+          transparent 8px);
       opacity: 0.5;
     }
 
     .example-card {
-      color: #e5e7eb; /* Force light text */
+      color: #e5e7eb;
+      /* Force light text */
       background: #050505;
       border: 1px solid rgba(255, 255, 255, 0.1);
       position: relative;
@@ -1895,7 +1895,7 @@
       font-family: 'JetBrains Mono', monospace;
       border: 1px solid rgba(78, 168, 255, 0.2);
     }
-  
+
     /* Test Case Status Styles */
     .test-case-tab.test-passed {
       border-color: #22c55e;
@@ -1908,13 +1908,21 @@
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
-  
+
     #submit-solution-btn {
-      background: #22c55e !important; /* Force green */
+      background: #22c55e !important;
+      /* Force green */
       color: white !important;
       border: none;
       padding: 8px 16px;
@@ -1923,8 +1931,7 @@
       cursor: pointer;
       /* Ensure it's not hidden by light mode variables */
     }
-    
-    </style>
+  </style>
   <script src="static/js/lib/mermaid.min.js"></script>
   <script>mermaid.initialize({ startOnLoad: true, theme: 'dark' });</script>
 </head>
@@ -2025,7 +2032,7 @@
             </svg>
             <span>Dashboard</span>
           </a>
-          <a class="nav-item" data-view="practice-view">
+          <a class="nav-item" data-view="practice-view" id="nav-practice-link">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="16 18 22 12 16 6"></polyline>
@@ -2922,6 +2929,7 @@
         else if (viewId === 'rewards-view') generateRewards();
         else if (viewId === 'settings-view') initSettingsView();
       }
+      window.showMainView = showMainView;
 
       navItems.forEach(item => {
         item.addEventListener('click', () => {
@@ -3069,7 +3077,7 @@
 
         function renderProblems() {
           const filteredProblems = problemsData.filter(p => (currentTopic === 'All Problems' || p.topic === currentTopic) && p.title.toLowerCase().includes(searchTerm.toLowerCase()));
-          problemsTableBody.innerHTML = filteredProblems.map(p => `<tr><td>${p.title}</td><td><span class="difficulty-tag ${p.difficulty.toLowerCase()}">${p.difficulty}</span></td><td>${p.acceptance}</td></tr>`).join('');
+          problemsTableBody.innerHTML = filteredProblems.map(p => `<tr onclick="window.openCodeEditor('${p.title}')" style="cursor: pointer;"><td>${p.title}</td><td><span class="difficulty-tag ${p.difficulty.toLowerCase()}">${p.difficulty}</span></td><td>${p.acceptance}</td></tr>`).join('');
         }
 
         function populateTopicFilters() {
@@ -3292,79 +3300,8 @@
       </div>
     </div>
   </div>
-  { icon: '💻', title: 'DP Dynamo', description: 'Solve 5 Dynamic Programming problems.' }, { icon: '🔗', title: 'Graph
-  Guru', description: 'Solve 5 Graph theory problems.' },
-  ];
-  rewardsGrid.innerHTML = rewardsData.map(badge => `<div class="badge-card">
-    <div class="badge-icon" style="font-size: 32px;">${badge.icon}</div>
-    <div class="badge-title">${badge.title}</div>
-    <div class="badge-description">${badge.description}</div>
-  </div>`).join('');
-  }
 
-  // --- Settings View Logic ---
-  let settingsViewInitialized = false;
-  function initSettingsView() {
-  const form = document.getElementById('settings-form');
-  const userIDInput = document.getElementById('setting-userid');
-  const nameInput = document.getElementById('setting-name');
-  const genderInput = document.getElementById('setting-gender');
-  const locationInput = document.getElementById('setting-location');
-  const githubInput = document.getElementById('setting-github');
-  const linkedinInput = document.getElementById('setting-linkedin');
-  if (!form) return;
 
-  userIDInput.value = userSettings.userID;
-  nameInput.value = userSettings.name || '';
-  genderInput.value = userSettings.gender || '';
-  locationInput.value = userSettings.location || '';
-  githubInput.value = userSettings.github || '';
-  linkedinInput.value = userSettings.linkedin || '';
-
-  if (settingsViewInitialized) return;
-
-  form.addEventListener('submit', (e) => {
-  e.preventDefault();
-  userSettings.name = nameInput.value.trim() || userSettings.userID;
-  userSettings.gender = genderInput.value;
-  userSettings.location = locationInput.value.trim();
-  userSettings.github = githubInput.value.trim();
-  userSettings.linkedin = linkedinInput.value.trim();
-  saveUserSettings();
-  updateHeaderUI();
-  showToast();
-  });
-  settingsViewInitialized = true;
-  }
-
-  function showToast() {
-  const toast = document.getElementById('toast-notification');
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 3000);
-  }
-
-  function runDashboardAnimations() {
-  document.querySelectorAll('.stats-grid .card, .main-column .card, .side-column .card').forEach((el, index) => {
-  el.classList.add('anim-hidden', 'animate-in');
-  el.style.animationDelay = `${100 + index * 100}ms`;
-  });
-  }
-
-  // --- INITIALIZATION ---
-  function initializeDashboard() {
-  const storedTheme = localStorage.getItem('theme') || 'dark';
-  applyTheme(storedTheme);
-
-  loadUserSettings();
-  updateHeaderUI();
-
-  if (waveCanvas) resizeCanvas();
-  animationLoop();
-  runDashboardAnimations();
-  }
-
-  initializeDashboard();
-  });
   </script>
 
   <!-- Code Editor Modal -->
@@ -3492,74 +3429,12 @@
       </div>
     </div>
   </div>
-  <div class="badge-title">${badge.title}</div>
-  <div class="badge-description">${badge.description}</div>
-  </div>`).join('');
-  }
+  <div class="badge-title"></div>
+  <div class="badge-description"></div>
+  </div>
 
-  // --- Settings View Logic ---
-  let settingsViewInitialized = false;
-  function initSettingsView() {
-  const form = document.getElementById('settings-form');
-  const userIDInput = document.getElementById('setting-userid');
-  const nameInput = document.getElementById('setting-name');
-  const genderInput = document.getElementById('setting-gender');
-  const locationInput = document.getElementById('setting-location');
-  const githubInput = document.getElementById('setting-github');
-  const linkedinInput = document.getElementById('setting-linkedin');
-  if (!form) return;
 
-  userIDInput.value = userSettings.userID;
-  nameInput.value = userSettings.name || '';
-  genderInput.value = userSettings.gender || '';
-  locationInput.value = userSettings.location || '';
-  githubInput.value = userSettings.github || '';
-  linkedinInput.value = userSettings.linkedin || '';
 
-  if (settingsViewInitialized) return;
-
-  form.addEventListener('submit', (e) => {
-  e.preventDefault();
-  userSettings.name = nameInput.value.trim() || userSettings.userID;
-  userSettings.gender = genderInput.value;
-  userSettings.location = locationInput.value.trim();
-  userSettings.github = githubInput.value.trim();
-  userSettings.linkedin = linkedinInput.value.trim();
-  saveUserSettings();
-  updateHeaderUI();
-  showToast();
-  });
-  settingsViewInitialized = true;
-  }
-
-  function showToast() {
-  const toast = document.getElementById('toast-notification');
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 3000);
-  }
-
-  function runDashboardAnimations() {
-  document.querySelectorAll('.stats-grid .card, .main-column .card, .side-column .card').forEach((el, index) => {
-  el.classList.add('anim-hidden', 'animate-in');
-  el.style.animationDelay = `${100 + index * 100}ms`;
-  });
-  }
-
-  // --- INITIALIZATION ---
-  function initializeDashboard() {
-  const storedTheme = localStorage.getItem('theme') || 'dark';
-  applyTheme(storedTheme);
-
-  loadUserSettings();
-  updateHeaderUI();
-
-  if (waveCanvas) resizeCanvas();
-  animationLoop();
-  runDashboardAnimations();
-  }
-
-  initializeDashboard();
-  });
   </script>
 
   <!-- Code Editor Modal -->
@@ -3687,74 +3562,9 @@
       </div>
     </div>
   </div>
-  <div class="badge-title">${badge.title}</div>
-  <div class="badge-description">${badge.description}</div>
-  </div>`).join('');
-  }
-
-  // --- Settings View Logic ---
-  let settingsViewInitialized = false;
-  function initSettingsView() {
-  const form = document.getElementById('settings-form');
-  const userIDInput = document.getElementById('setting-userid');
-  const nameInput = document.getElementById('setting-name');
-  const genderInput = document.getElementById('setting-gender');
-  const locationInput = document.getElementById('setting-location');
-  const githubInput = document.getElementById('setting-github');
-  const linkedinInput = document.getElementById('setting-linkedin');
-  if (!form) return;
-
-  userIDInput.value = userSettings.userID;
-  nameInput.value = userSettings.name || '';
-  genderInput.value = userSettings.gender || '';
-  locationInput.value = userSettings.location || '';
-  githubInput.value = userSettings.github || '';
-  linkedinInput.value = userSettings.linkedin || '';
-
-  if (settingsViewInitialized) return;
-
-  form.addEventListener('submit', (e) => {
-  e.preventDefault();
-  userSettings.name = nameInput.value.trim() || userSettings.userID;
-  userSettings.gender = genderInput.value;
-  userSettings.location = locationInput.value.trim();
-  userSettings.github = githubInput.value.trim();
-  userSettings.linkedin = linkedinInput.value.trim();
-  saveUserSettings();
-  updateHeaderUI();
-  showToast();
-  });
-  settingsViewInitialized = true;
-  }
-
-  function showToast() {
-  const toast = document.getElementById('toast-notification');
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 3000);
-  }
-
-  function runDashboardAnimations() {
-  document.querySelectorAll('.stats-grid .card, .main-column .card, .side-column .card').forEach((el, index) => {
-  el.classList.add('anim-hidden', 'animate-in');
-  el.style.animationDelay = `${100 + index * 100}ms`;
-  });
-  }
-
-  // --- INITIALIZATION ---
-  function initializeDashboard() {
-  const storedTheme = localStorage.getItem('theme') || 'dark';
-  applyTheme(storedTheme);
-
-  loadUserSettings();
-  updateHeaderUI();
-
-  if (waveCanvas) resizeCanvas();
-  animationLoop();
-  runDashboardAnimations();
-  }
-
-  initializeDashboard();
-  });
+  <div class="badge-title"></div>
+  <div class="badge-description"></div>
+  </div>
   </script>
 
   <!-- Code Editor Modal -->
@@ -3882,74 +3692,9 @@
       </div>
     </div>
   </div>
-  <div class="badge-title">${badge.title}</div>
-  <div class="badge-description">${badge.description}</div>
-  </div>`).join('');
-  }
-
-  // --- Settings View Logic ---
-  let settingsViewInitialized = false;
-  function initSettingsView() {
-  const form = document.getElementById('settings-form');
-  const userIDInput = document.getElementById('setting-userid');
-  const nameInput = document.getElementById('setting-name');
-  const genderInput = document.getElementById('setting-gender');
-  const locationInput = document.getElementById('setting-location');
-  const githubInput = document.getElementById('setting-github');
-  const linkedinInput = document.getElementById('setting-linkedin');
-  if (!form) return;
-
-  userIDInput.value = userSettings.userID;
-  nameInput.value = userSettings.name || '';
-  genderInput.value = userSettings.gender || '';
-  locationInput.value = userSettings.location || '';
-  githubInput.value = userSettings.github || '';
-  linkedinInput.value = userSettings.linkedin || '';
-
-  if (settingsViewInitialized) return;
-
-  form.addEventListener('submit', (e) => {
-  e.preventDefault();
-  userSettings.name = nameInput.value.trim() || userSettings.userID;
-  userSettings.gender = genderInput.value;
-  userSettings.location = locationInput.value.trim();
-  userSettings.github = githubInput.value.trim();
-  userSettings.linkedin = linkedinInput.value.trim();
-  saveUserSettings();
-  updateHeaderUI();
-  showToast();
-  });
-  settingsViewInitialized = true;
-  }
-
-  function showToast() {
-  const toast = document.getElementById('toast-notification');
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 3000);
-  }
-
-  function runDashboardAnimations() {
-  document.querySelectorAll('.stats-grid .card, .main-column .card, .side-column .card').forEach((el, index) => {
-  el.classList.add('anim-hidden', 'animate-in');
-  el.style.animationDelay = `${100 + index * 100}ms`;
-  });
-  }
-
-  // --- INITIALIZATION ---
-  function initializeDashboard() {
-  const storedTheme = localStorage.getItem('theme') || 'dark';
-  applyTheme(storedTheme);
-
-  loadUserSettings();
-  updateHeaderUI();
-
-  if (waveCanvas) resizeCanvas();
-  animationLoop();
-  runDashboardAnimations();
-  }
-
-  initializeDashboard();
-  });
+  <div class="badge-title"></div>
+  <div class="badge-description"></div>
+  </div>
   </script>
 
   <!-- Full Screen Editor Overlay -->
@@ -4072,6 +3817,352 @@
   </div>
 
 
+  <script>
+    // CRITICAL FIX: Hijack the Submit button execution
+    (function () {
+      console.log('[HIJACK] Initializing Ultra-Premium Submit Hijack v4...');
+
+      // --- MOCK ANALYZE FUNCTION (To restore "Cognitive" features) ---
+      function analyzeSolution(code, runtime) {
+        // Heuristics for "Coder Type" and Insights
+        const lines = code.split('\n').filter(l => l.trim()).length;
+        const hasComments = code.includes('#');
+        const hasPrint = code.includes('print(');
+
+        let insights = [];
+        let tier = 'Good';
+        let points = 70;
+        let color = '#f59e0b'; // Yellow (Good)
+
+        // 1. Structure (Base Insight)
+        if (code.includes('def solution') || code.includes('class Solution')) {
+          insights.push({ icon: '✓', title: 'Clean Architecture', desc: 'Standard algorithmic structure', positive: true });
+        }
+
+        // 2. Efficiency & Tier Logic
+        if (lines < 15 && !hasPrint) {
+          tier = 'Optimal';
+          points = 100;
+          color = '#22c55e'; // Green
+          insights.push({ icon: '⚡', title: 'The Sprinter', desc: 'Highly concise implementation', positive: true });
+        } else if (lines > 30 || hasPrint) {
+          tier = 'Improvable';
+          points = 50;
+          color = '#f97316'; // Orange
+          insights.push({ icon: '⚠️', title: 'Refactoring Needed', desc: hasPrint ? 'Remove debug prints' : 'Code is verbose', positive: false });
+        } else {
+          // Default is Good
+          insights.push({ icon: '🛡️', title: 'The Architect', desc: 'Robust and readable solution', positive: true });
+        }
+
+        // 3. Hygiene
+        if (!hasPrint) {
+          insights.push({ icon: '✨', title: 'Production Grade', desc: 'Clean input/output flow', positive: true });
+        }
+
+        return {
+          tier: tier,
+          points: points,
+          color: color,
+          insights: insights,
+          timeComplexity: lines < 15 ? 'O(n)' : 'O(n log n)',
+          spaceComplexity: 'O(1)'
+        };
+      }
+
+      // --- HTML GENERATORS (Copied and adapted from successScreen.js/failureScreen.js) ---
+      function showSuccess(data, code) {
+        const analysis = analyzeSolution(code, data.execution_time_ms);
+        // Use our calculated tier/points if not provided by backend
+        const tier = analysis.tier;
+        const points = analysis.points;
+        const color = analysis.color;
+
+        // HIDDEN TESTS LOGIC
+        const results = data.results || [];
+        const hiddenTotal = results.filter(r => r.hidden).length;
+        const hiddenPassed = results.filter(r => r.hidden && r.passed).length;
+        const hiddenText = hiddenTotal > 0 ? `<div style="font-size:0.8rem;color:#9ca3af;margin-top:5px;">${hiddenPassed}/${hiddenTotal} Hidden Passed</div>` : '';
+
+        const overlay = document.createElement('div');
+        overlay.id = 'success-overlay';
+        overlay.style.cssText = `position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:999999;display:flex;justify-content:flex-end;opacity:0;transition:opacity 0.3s ease;`;
+
+        overlay.innerHTML = `
+           <div style="width:50%;height:100%;background:#0a0a0a;border-left:1px solid rgba(255,255,255,0.1);padding:40px;transform:translateX(100%);transition:transform 0.4s cubic-bezier(0.16,1,0.3,1);display:flex;flex-direction:column;overflow-y:auto;">
+             <!-- Header -->
+             <div style="margin-bottom:30px;display:flex;align-items:center;gap:15px;">
+                <div style="width:50px;height:50px;border-radius:12px;background:rgba(34,197,94,0.2);display:flex;align-items:center;justify-content:center;font-size:24px;color:#22c55e;">✓</div>
+                <div><h1 style="margin:0;font-size:2rem;color:#22c55e;">Success!</h1><p style="margin:5px 0 0 0;color:#9ca3af;">Great job! You solved it.</p></div>
+             </div>
+             
+             <!-- Stats (Beats X%) -->
+             <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-bottom:20px;">
+               <div style="background:#1a1a1a;padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.05);">
+                 <div style="color:#9ca3af;font-size:0.9rem;margin-bottom:5px;">Runtime</div>
+                 <div style="font-size:1.8rem;font-weight:700;color:#e5e7eb;">${data.execution_time_ms ? Math.round(data.execution_time_ms) + 'ms' : '0ms'}</div>
+                 <div style="font-size:0.8rem;color:#22c55e;margin-top:5px;">Beats 85%</div>
+               </div>
+               <div style="background:#1a1a1a;padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.05);">
+                 <div style="color:#9ca3af;font-size:0.9rem;margin-bottom:5px;">Solution Tier</div>
+                 <div style="font-size:1.5rem;font-weight:700;color:${color};">${tier}</div>
+                 <div style="font-size:0.8rem;color:#9ca3af;margin-top:5px;">${points} Points Awarded</div>
+                 ${hiddenText}
+               </div>
+             </div>
+             
+             <!-- Cognitive Analysis -->
+             <div style="margin-bottom:30px;">
+               <h3 style="color:#e5e7eb;margin-bottom:15px;">🧠 Cognitive Analysis</h3>
+               <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
+                  ${analysis.insights.map(i => `<div style="background:#1a1a1a;padding:15px;border-radius:8px;border-left:3px solid ${i.positive ? '#22c55e' : '#f59e0b'};display:flex;align-items:flex-start;gap:12px;"><span style="font-size:1.2rem;">${i.icon}</span><div><div style="color:#e5e7eb;font-weight:600;margin-bottom:2px;">${i.title}</div><div style="color:#9ca3af;font-size:0.9rem;">${i.desc}</div></div></div>`).join('')}
+               </div>
+               <!-- Complexity -->
+               <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;">
+                  <div style="background:rgba(255,255,255,0.03);padding:15px;border-radius:8px;text-align:center;">
+                    <div style="color:#9ca3af;font-size:0.85rem;margin-bottom:5px;">Time Complexity</div>
+                    <div style="color:#22c55e;font-size:1.3rem;font-weight:600;">${analysis.timeComplexity}</div>
+                  </div>
+                  <div style="background:rgba(255,255,255,0.03);padding:15px;border-radius:8px;text-align:center;">
+                    <div style="color:#9ca3af;font-size:0.85rem;margin-bottom:5px;">Space Complexity</div>
+                    <div style="color:#22c55e;font-size:1.3rem;font-weight:600;">${analysis.spaceComplexity}</div>
+                  </div>
+               </div>
+             </div>
+
+             <!-- POINTS BREAKDOWN (CARDS SYSTEM) -->
+             <div style="margin-bottom: 30px;">
+               <h3 style="color: #e5e7eb; margin-bottom: 20px; font-size: 1.2rem;">💎 Points Breakdown</h3>
+               <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+                 
+                 <!-- Optimal -->
+                 <div style="background: ${tier === 'Optimal' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(255,255,255,0.02)'}; padding: 15px; border-radius: 8px; border: 1px solid ${tier === 'Optimal' ? '#22c55e' : 'rgba(255,255,255,0.05)'}; display: flex; flex-direction: column; gap: 5px;">
+                   <div style="width: 8px; height: 8px; border-radius: 50%; background: #22c55e; margin-bottom: 5px;"></div>
+                   <div style="color: #e5e7eb; font-weight: 600;">Optimal</div>
+                   <div style="color: #22c55e; font-size: 0.9rem;">100 pts</div>
+                 </div>
+
+                 <!-- Good -->
+                 <div style="background: ${tier === 'Good' ? 'rgba(245, 158, 11, 0.1)' : 'rgba(255,255,255,0.02)'}; padding: 15px; border-radius: 8px; border: 1px solid ${tier === 'Good' ? '#f59e0b' : 'rgba(255,255,255,0.05)'}; display: flex; flex-direction: column; gap: 5px;">
+                   <div style="width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; margin-bottom: 5px;"></div>
+                   <div style="color: #e5e7eb; font-weight: 600;">Good</div>
+                   <div style="color: #f59e0b; font-size: 0.9rem;">70 pts</div>
+                 </div>
+
+                 <!-- Improvable -->
+                 <div style="background: ${tier === 'Improvable' ? 'rgba(249, 115, 22, 0.1)' : 'rgba(255,255,255,0.02)'}; padding: 15px; border-radius: 8px; border: 1px solid ${tier === 'Improvable' ? '#f97316' : 'rgba(255,255,255,0.05)'}; display: flex; flex-direction: column; gap: 5px;">
+                   <div style="width: 8px; height: 8px; border-radius: 50%; background: #f97316; margin-bottom: 5px;"></div>
+                   <div style="color: #e5e7eb; font-weight: 600;">Improvable</div>
+                   <div style="color: #f97316; font-size: 0.9rem;">50 pts</div>
+                 </div>
+
+                 <!-- Alternative/Bonus -->
+                 <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 5px; opacity: 0.6;">
+                   <div style="width: 8px; height: 8px; border-radius: 50%; background: #3b82f6; margin-bottom: 5px;"></div>
+                   <div style="color: #e5e7eb; font-weight: 600;">Attempt</div>
+                   <div style="color: #3b82f6; font-size: 0.9rem;">Bonus</div>
+                 </div>
+
+               </div>
+               <div style="margin-top: 15px; color: #9ca3af; font-size: 0.9rem; text-align: center;">
+                 You earned <span style="color: ${color}; font-weight: bold;">${points} points</span> for this solution.
+               </div>
+             </div>
+             
+             <!-- Buttons -->
+             <div style="display:flex;gap:15px;margin-top:auto;">
+               <button onclick="document.getElementById('success-overlay').remove()" style="flex:1;padding:15px;background:#2a2a2a;color:#e5e7eb;border:none;border-radius:8px;font-weight:600;cursor:pointer;">Close</button>
+               <button id="next-problem-btn" style="flex:1;padding:15px;background:#22c55e;color:#000;border:none;border-radius:8px;font-weight:600;cursor:pointer;">Next Problem →</button>
+             </div>
+           </div>`;
+
+        document.body.appendChild(overlay);
+
+        // Attach event listener to Next Problem button
+        const nextProblemBtn = document.getElementById('next-problem-btn');
+        if (nextProblemBtn) {
+          nextProblemBtn.addEventListener('click', () => {
+            document.getElementById('success-overlay').remove();
+            document.getElementById('full-screen-editor').style.display = 'none';
+            document.body.style.overflow = 'auto';
+
+            setTimeout(() => {
+              if (window.showMainView) window.showMainView('practice-view');
+
+              const pv = document.getElementById('practice-view');
+              if (pv) {
+                document.querySelectorAll('main > div[id$="-view"]').forEach(v => v.classList.add('hidden'));
+                pv.classList.remove('hidden');
+              }
+
+              document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+              const nl = document.getElementById('nav-practice-link');
+              if (nl) nl.classList.add('active');
+
+              window.scrollTo({ top: 0 });
+            }, 100);
+          });
+        }
+
+        requestAnimationFrame(() => { overlay.style.opacity = '1'; overlay.children[0].style.transform = 'translateX(0)'; });
+      }
+
+      function showFailure(data, code) {
+        const analysis = analyzeSolution(code);
+        const passed = data.passedCount;
+        const total = data.totalCount;
+
+        // HIDDEN TESTS LOGIC
+        const results = data.results || [];
+        const hiddenTotal = results.filter(r => r.hidden).length;
+        const hiddenPassed = results.filter(r => r.hidden && r.passed).length;
+        const hiddenText = hiddenTotal > 0 ? `<div style="font-size:0.9rem;color:#9ca3af;margin-top:10px;">(Includes <b>${hiddenPassed}/${hiddenTotal}</b> Hidden Cases)</div>` : '';
+
+        // FAILED TESTS DETAILS (Visible Only)
+        const failedTests = results.filter(r => !r.passed && !r.hidden);
+        const failedTestsHTML = failedTests.length > 0 ? `
+           <div style="margin-top: 20px;">
+             <h3 style="color:#ef4444;margin-bottom:15px;font-size:1.1rem;">Failed Test Cases</h3>
+             <div style="display:flex;flex-direction:column;gap:10px;">
+               ${failedTests.map((t, idx) => `
+                 <div style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.2); padding:15px; border-radius:8px;">
+                   <div style="font-weight:600;color:#ef4444;margin-bottom:8px;">Test Case ${idx + 1}</div>
+                   <div style="display:grid;grid-template-columns:1fr;gap:8px;font-size:0.9rem;">
+                     <div><span style="color:#9ca3af;">Input:</span> <code style="color:#e5e7eb;background:rgba(255,255,255,0.05);padding:2px 5px;border-radius:4px;">${JSON.stringify(t.input)}</code></div>
+                     <div><span style="color:#9ca3af;">Expected:</span> <code style="color:#22c55e;background:rgba(255,255,255,0.05);padding:2px 5px;border-radius:4px;">${JSON.stringify(t.expected)}</code></div>
+                     <div><span style="color:#9ca3af;">Output:</span> <code style="color:#ef4444;background:rgba(255,255,255,0.05);padding:2px 5px;border-radius:4px;">${JSON.stringify(t.actual)}</code></div>
+                   </div>
+                 </div>
+               `).join('')}
+             </div>
+           </div>
+         ` : '';
+
+        const overlay = document.createElement('div');
+        overlay.id = 'failure-overlay';
+        overlay.style.cssText = `position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:999999;display:flex;justify-content:flex-end;opacity:0;transition:opacity 0.3s ease;`;
+
+        overlay.innerHTML = `
+           <div style="width:50%;height:100%;background:#0a0a0a;border-left:1px solid rgba(255,255,255,0.1);padding:40px;transform:translateX(100%);transition:transform 0.4s cubic-bezier(0.16,1,0.3,1);display:flex;flex-direction:column;overflow-y:auto;">
+             <!-- Header -->
+             <div style="margin-bottom:30px;display:flex;align-items:center;gap:15px;">
+                <div style="width:50px;height:50px;border-radius:12px;background:rgba(239,68,68,0.2);display:flex;align-items:center;justify-content:center;font-size:24px;color:#ef4444;">✗</div>
+                <div><h1 style="margin:0;font-size:2rem;color:#ef4444;">Tests Failed</h1><p style="margin:5px 0 0 0;color:#9ca3af;">Keep going, you're learning!</p></div>
+             </div>
+             
+             <!-- Stats -->
+             <div style="display:grid;grid-template-columns:1fr;gap:15px;margin-bottom:20px;">
+                <div style="background:#1a1a1a;padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.05);text-align:center;">
+                   <div style="color:#9ca3af;font-size:0.9rem;">Test Cases</div>
+                   <div style="font-size:2rem;font-weight:700;color:#e5e7eb;">${passed} <span style="color:#666;font-size:1.2rem;">/ ${total}</span></div>
+                   <div style="color:#ef4444;font-size:0.9rem;margin-top:5px;">Failed</div>
+                   ${hiddenText}
+                </div>
+             </div>
+
+             ${failedTestsHTML}
+
+             <!-- Insights -->
+             <div style="margin:30px 0;">
+               <h3 style="color:#e5e7eb;margin-bottom:15px;">🧠 Cognitive Analysis</h3>
+               <div style="display:flex;flex-direction:column;gap:10px;">
+                  ${analysis.insights.map(i => `<div style="background:#1a1a1a;padding:15px;border-radius:8px;border-left:3px solid ${i.positive ? '#22c55e' : '#f59e0b'};display:flex;align-items:flex-start;gap:12px;"><span style="font-size:1.2rem;">${i.icon}</span><div><div style="color:#e5e7eb;font-weight:600;margin-bottom:2px;">${i.title}</div><div style="color:#9ca3af;font-size:0.9rem;">${i.desc}</div></div></div>`).join('')}
+               </div>
+             </div>
+             
+             <!-- Buttons (Try Again & Verify Hint) -->
+             <div style="display:flex;gap:15px;margin-top:auto;">
+               <button onclick="document.getElementById('failure-overlay').remove()" style="flex:1;padding:15px;background:#2a2a2a;color:#e5e7eb;border:none;border-radius:8px;font-weight:600;cursor:pointer;">Try Again</button>
+               <button onclick="document.getElementById('failure-overlay').remove(); if(window.showVisualHint) window.showVisualHint(); else alert('Hint unavailable in offline mode');" style="flex:1;padding:15px;background:rgba(168,85,247,0.1);color:#a855f7;border:1px solid rgba(168,85,247,0.2);border-radius:8px;font-weight:600;cursor:pointer;">💡 View Hint</button>
+             </div>
+           </div>`;
+
+        document.body.appendChild(overlay);
+        requestAnimationFrame(() => { overlay.style.opacity = '1'; overlay.children[0].style.transform = 'translateX(0)'; });
+      }
+
+      // --- HIJACK LOGIC (Modified to prevent page reload) ---
+      document.addEventListener('click', async function (e) {
+        const target = e.target;
+        const isSubmit = target.id === 'submit-solution-btn' ||
+          target.id === 'submit-code-btn' ||
+          target.id === 'submit-btn' ||
+          (target.tagName === 'BUTTON' && target.innerText.includes('Submit')) ||
+          (target.parentElement && target.parentElement.tagName === 'BUTTON' && target.parentElement.innerText.includes('Submit'));
+
+        if (isSubmit) {
+          console.log('[HIJACK] Submit button clicked! Intercepting...');
+          e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
+
+          const btn = target.tagName === 'BUTTON' ? target : target.closest('button');
+
+          let code = window.editorInstance ? window.editorInstance.getValue() : '';
+          let title = window.currentProblemTitle || '';
+
+          if (!code || !title) { alert('Editor/Title error. Refresh.'); return; }
+
+          const originalText = btn.innerHTML;
+          btn.innerHTML = '<span style="animation: spin 1s linear infinite; display: inline-block;">⏳</span>';
+          btn.disabled = true;
+
+          let testCases = (window.problemsDataMap && window.problemsDataMap[title]) ? window.problemsDataMap[title].testCases : [];
+
+          try {
+            const response = await fetch('/api/submit-code', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ code, language: 'python', problemId: title, testCases })
+            });
+            const data = await response.json();
+
+            if (data.success) {
+              if (data.allPassed) showSuccess(data, code);
+              else showFailure(data, code);
+
+              // Update Tabs - Restored and Filtered for Visible Tests
+              if (data.results) {
+                console.log('[HIJACK] Raw results:', data.results);
+                // Filter for only visible tests to update the editor UI
+                const visibleResults = data.results.filter(r => !r.hidden);
+                console.log('[HIJACK] Filtered visible results:', visibleResults);
+
+                // Update global state so clicking tabs works
+                window.currentTestResults = visibleResults;
+
+                const tabs = document.querySelectorAll('.test-case-tab');
+                if (tabs.length) {
+                  visibleResults.forEach((res, idx) => {
+                    if (tabs[idx]) {
+                      tabs[idx].classList.remove('test-passed', 'test-failed');
+                      tabs[idx].classList.add(res.passed ? 'test-passed' : 'test-failed');
+                      tabs[idx].innerHTML = `Case ${idx + 1} <span style="color:${res.passed ? '#22c55e' : '#ef4444'}">${res.passed ? '✓' : '✗'}</span>`;
+                    }
+                  });
+
+                  // Update active tab content immediately
+                  const activeTabIndex = Array.from(tabs).findIndex(t => t.classList.contains('active'));
+                  const targetIndex = activeTabIndex >= 0 ? activeTabIndex : 0;
+                  const content = document.querySelector('.test-case-content');
+
+                  if (window.displayTestResult && content && visibleResults[targetIndex]) {
+                    window.displayTestResult(visibleResults[targetIndex], content);
+                  }
+                }
+              }
+            } else {
+              alert('Error: ' + data.error);
+            }
+          } catch (err) {
+            console.error('[HIJACK] Error:', err);
+            alert('Sys Error: ' + err.message);
+          } finally {
+            if (btn) { btn.disabled = false; btn.innerHTML = originalText; }
+          }
+        }
+      }, true);
+    })();
+  </script>
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
   <script src="static/js/cognitive/CognitiveObserver.js"></script>
@@ -4104,24 +4195,30 @@
   </script>
   <script src="static/js/cognitive/AdaptiveIDE.js?v=2"></script>
   <script src="static/js/cognitive/VisualDebugger.js?v=3"></script>
-  <script src="static/js/main.js?v=19"></script>
+  <script src="static/js/modules/problemHints.js?v=1"></script>
+  <script src="static/js/problems_db.js?v=1"></script>
+  <script src="static/js/main.js?v=1001"></script>
 
   <style>
     /* FORCE OVERRIDES FOR LIGHT MODE VISIBILITY */
-    
+
     /* 1. Example Cards: Force dark background and light text */
     .example-card {
       background-color: #050505 !important;
       color: #e5e7eb !important;
       border: 1px solid rgba(255, 255, 255, 0.1) !important;
     }
-    .example-card code, .example-card pre {
+
+    .example-card code,
+    .example-card pre {
       color: #e5e7eb !important;
       background: rgba(255, 255, 255, 0.1) !important;
     }
+
     .io-label {
       color: #9ca3af !important;
     }
+
     .io-value {
       color: #e5e7eb !important;
     }
@@ -4131,23 +4228,27 @@
       background-color: #22c55e !important;
       color: #ffffff !important;
       border: none !important;
-      opacity: 1; /* Ensure opacity is 1 when visible */
+      opacity: 1;
+      /* Ensure opacity is 1 when visible */
       /* Note: display property is handled by JS */
     }
-    
+
     /* 3. Run Button: Force Visibility */
     #run-code-btn {
       background-color: #1a1a1a !important;
       color: #4ea8ff !important;
       border: 1px solid #4ea8ff !important;
     }
-    
+
     /* 4. Problem Description Text */
-    #editor-problem-description, #editor-problem-description p, #editor-problem-description li {
+    #editor-problem-description,
+    #editor-problem-description p,
+    #editor-problem-description li {
       color: #e5e7eb !important;
     }
   </style>
-    
+
+
 </body>
 
 </html>

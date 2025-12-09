@@ -1,0 +1,23 @@
+{
+    "Two Sum": {
+        "title": "Two Sum",
+        "difficulty": "Easy",
+        "hints": {
+            "mermaid": "graph TD\n      A[Start with array and target] --> B{Use Hash Map?}\n      B -->|Yes| C[Create empty hash map]\n      C --> D[Iterate through array]\n      D --> E{complement = target - current}\n      E --> F{Is complement in map?}\n      F -->|Yes| G[Return indices]\n      F -->|No| H[Store current in map]\n      H --> D\n      G --> I[End - O n time]\n      \n      style C fill:#22c55e\n      style F fill:#4ea8ff\n      style I fill:#22c55e"
+        }
+    },
+    "Valid Anagram": {
+        "title": "Valid Anagram",
+        "difficulty": "Easy",
+        "hints": {
+            "mermaid": "graph TD\n      A[Start with two strings] --> B{Same length?}\n      B -->|No| C[Return false]\n      B -->|Yes| D[Count character frequencies]\n      D --> E[Use hash map or array]\n      E --> F[Compare frequencies]\n      F --> G{All match?}\n      G -->|Yes| H[Return true]\n      G -->|No| I[Return false]\n      \n      style D fill:#22c55e\n      style E fill:#4ea8ff\n      style H fill:#22c55e"
+        }
+    },
+    "Contains Duplicate": {
+        "title": "Contains Duplicate",
+        "difficulty": "Easy",
+        "hints": {
+            "mermaid": "graph TD\n      A[Start with array] --> B{Use Set?}\n      B -->|Yes| C[Create empty set]\n      C --> D[Iterate through array]\n      D --> E{Element in set?}\n      E -->|Yes| F[Return true - duplicate found]\n      E -->|No| G[Add to set]\n      G --> D\n      F --> H[End - O n time]\n      \n      style C fill:#22c55e\n      style E fill:#4ea8ff\n      style H fill:#22c55e"
+        }
+    }
+}
