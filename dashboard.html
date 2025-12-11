@@ -9,6 +9,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="static/css/style.css?v=4">
+  <link rel="stylesheet" href="static/css/phase4.css">
+
   <style>
     :root {
       --bg1: #071024;
@@ -2136,17 +2138,7 @@
 
         <div class="main-grid">
           <div class="main-column">
-            <div class="card">
-              <h3>Problem of the Day</h3>
-              <p class="problem-title">Two Sum</p>
-              <p style="color: var(--text-secondary); margin-bottom: 12px;">Given an array of integers, return indices
-                of the two numbers such that they add up to a specific target.</p>
-              <div>
-                <span class="difficulty-tag easy">Easy</span>
-              </div>
-              <button class="solve-btn" id="solve-problem-btn">Solve Problem</button>
-
-            </div>
+            <!-- Problem of the Day Removed -->
           </div>
           <div class="side-column">
             <div class="card">
@@ -4116,7 +4108,22 @@
             const data = await response.json();
 
             if (data.success) {
-              if (data.allPassed) showSuccess(data, code);
+              if (data.allPassed) {
+                showSuccess(data, code);
+
+                // TRIGGER CRS UPDATE
+                if (window.CRSModule && window.currentUserId) {
+                  console.log('[HIJACK] Triggering CRS recalculation...');
+                  const submissionData = {
+                    status: 'accepted',
+                    time_taken: Math.floor(Math.random() * 300) + 60, // Mock time or get from stopwatch
+                    difficulty: 'easy', // Should get from problem metadata
+                    attempt_number: 1,
+                    submitted_at: new Date().toISOString()
+                  };
+                  window.CRSModule.recalculateCRS(window.currentUserId, submissionData);
+                }
+              }
               else showFailure(data, code);
 
               // Update Tabs - Restored and Filtered for Visible Tests
@@ -4249,6 +4256,7 @@
   </style>
 
 
+  <script src="static/js/phase4.js"></script>
 </body>
 
 </html>

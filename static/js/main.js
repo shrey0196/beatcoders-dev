@@ -12,10 +12,9 @@ function initApp() {
   };
 
   // --- MONACO EDITOR & COGNITIVE MODULES ---
-  // --- MONACO EDITOR & COGNITIVE MODULES ---
   let editorInstance = null;
-  const cognitiveObserver = new window.CognitiveObserver();
-  const cognitiveReplay = new window.CognitiveReplay('cognitive-chart');
+  const cognitiveObserver = window.CognitiveObserver ? new window.CognitiveObserver() : null;
+  const cognitiveReplay = window.CognitiveReplay ? new window.CognitiveReplay('cognitive-chart') : null;
 
   // Use global problem set from problems_db.js
   const problems = window.FULL_PROBLEM_SET || [];
@@ -311,8 +310,12 @@ function initApp() {
   console.log("INIT APP STARTED");
 
   // Phase 3: Adaptive IDE (make globally accessible)
-  window.adaptiveIDE = new window.AdaptiveIDE();
-  window.visualDebugger = new window.VisualDebugger();
+  if (window.AdaptiveIDE) {
+    window.adaptiveIDE = new window.AdaptiveIDE();
+  }
+  if (window.VisualDebugger) {
+    window.visualDebugger = new window.VisualDebugger();
+  }
 
   // Configure Monaco Loader
   if (window.require) {

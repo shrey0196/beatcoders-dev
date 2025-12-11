@@ -43,19 +43,26 @@ from models.user import User
 from models.password_reset import PasswordReset
 from models.cognitive import CognitiveHistory
 from models.problem import Problem
+from models.crs import CRSScore
+from models.skill_roadmap import SkillRoadmap
+from models.mentor_conversation import MentorConversation
 Base.metadata.create_all(bind=engine)
 
 # Import and include routers
-from api.routes import auth, cognitive, submissions, visualization, run_code
+from api.routes import auth, cognitive, submissions, visualization, run_code, problems
+from api.routes import crs, skill_roadmap, ai_mentor  # Phase 4 routes
 
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 app.include_router(cognitive.router, prefix="/api/cognitive", tags=["cognitive"])
 app.include_router(submissions.router, prefix="/api/submissions", tags=["submissions"])
 app.include_router(visualization.router)
 app.include_router(run_code.router, tags=["run_code"])
-
-from api.routes import problems
 app.include_router(problems.router, prefix="/api", tags=["problems"])
+
+# Phase 4 routes
+app.include_router(crs.router, prefix="/api", tags=["crs"])
+app.include_router(skill_roadmap.router, prefix="/api", tags=["skill-roadmap"])
+app.include_router(ai_mentor.router, prefix="/api", tags=["ai-mentor"])
 
 @app.get("/api")
 async def root():

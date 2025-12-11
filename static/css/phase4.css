@@ -1,0 +1,496 @@
+/**
+ * Phase 4 - CRS & Skill Growth Features CSS
+ * Styles for CRS badge, roadmap, and AI mentor components
+ */
+
+/* ============================================================================
+   CRS Badge in Header
+   ============================================================================ */
+
+.crs-badge {
+    display: flex;
+    align-items: center;
+    margin-right: 16px;
+}
+
+.crs-badge-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: var(--glass);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.crs-badge-content:hover {
+    background: var(--glass-2);
+    transform: translateY(-2px);
+}
+
+.crs-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.crs-score {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text-strong);
+}
+
+.crs-tier-bronze .crs-score {
+    color: #CD7F32;
+}
+
+.crs-tier-silver .crs-score {
+    color: #C0C0C0;
+}
+
+.crs-tier-gold .crs-score {
+    color: #FFD700;
+}
+
+.crs-tier-platinum .crs-score {
+    color: #E5E4E2;
+}
+
+.crs-tier-icon {
+    font-size: 1.2rem;
+}
+
+/* ============================================================================
+   CRS Dashboard Card
+   ============================================================================ */
+
+.crs-card {
+    margin-bottom: 20px;
+}
+
+.crs-overview {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+    align-items: center;
+}
+
+.crs-main-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.crs-score-display {
+    font-size: 3rem;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.crs-tier-bronze .crs-score-display {
+    background: linear-gradient(135deg, #CD7F32, #B8860B);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.crs-tier-silver .crs-score-display {
+    background: linear-gradient(135deg, #C0C0C0, #A8A8A8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.crs-tier-gold .crs-score-display {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.crs-tier-platinum .crs-score-display {
+    background: linear-gradient(135deg, #E5E4E2, #B0C4DE);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.crs-tier-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.crs-tier-bronze.crs-tier-badge {
+    background: rgba(205, 127, 50, 0.15);
+    color: #CD7F32;
+}
+
+.crs-tier-silver.crs-tier-badge {
+    background: rgba(192, 192, 192, 0.15);
+    color: #C0C0C0;
+}
+
+.crs-tier-gold.crs-tier-badge {
+    background: rgba(255, 215, 0, 0.15);
+    color: #FFD700;
+}
+
+.crs-tier-platinum.crs-tier-badge {
+    background: rgba(229, 228, 226, 0.15);
+    color: #E5E4E2;
+}
+
+.crs-components {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.crs-component {
+    display: grid;
+    grid-template-columns: 120px 1fr 60px;
+    align-items: center;
+    gap: 12px;
+}
+
+.component-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.component-bar {
+    height: 8px;
+    background: var(--glass-2);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.component-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2));
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+.component-value {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-strong);
+    text-align: right;
+}
+
+.crs-graph-container {
+    margin: 24px 0;
+    height: 200px;
+    background: var(--glass-2);
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.crs-insights {
+    margin-top: 24px;
+}
+
+.crs-insights h4 {
+    font-size: 0.9rem;
+    color: var(--text-strong);
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.insights-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.insights-list li {
+    padding: 8px 12px;
+    background: var(--glass-2);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* ============================================================================
+   Skill Roadmap Card
+   ============================================================================ */
+
+.roadmap-card {
+    margin-bottom: 20px;
+}
+
+.roadmap-level {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    background: var(--glass-2);
+    border-radius: 10px;
+    margin-bottom: 16px;
+}
+
+.level-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.level-value {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent1);
+    text-transform: capitalize;
+}
+
+.roadmap-section {
+    margin-bottom: 20px;
+}
+
+.roadmap-section h4 {
+    font-size: 0.9rem;
+    color: var(--text-strong);
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.weekly-goals {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.weekly-goals li {
+    padding: 8px 12px;
+    background: var(--glass-2);
+    border-radius: 8px;
+    margin-bottom: 6px;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    position: relative;
+    padding-left: 28px;
+}
+
+.weekly-goals li::before {
+    content: "✓";
+    position: absolute;
+    left: 10px;
+    color: var(--accent1);
+    font-weight: 700;
+}
+
+.focus-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.focus-tag {
+    padding: 6px 12px;
+    background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    color: var(--bg1);
+    border-radius: 16px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.recommended-problems {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.recommended-problems li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    background: var(--glass-2);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    transition: background 0.2s ease;
+}
+
+.recommended-problems li:hover {
+    background: var(--glass);
+    cursor: pointer;
+}
+
+.recommended-problems .problem-title {
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+/* ============================================================================
+   Premium Teaser Cards
+   ============================================================================ */
+
+.premium-teaser {
+    text-align: center;
+    padding: 24px;
+    background: linear-gradient(135deg, rgba(78, 168, 255, 0.05), rgba(139, 92, 246, 0.05));
+    border: 1px solid rgba(78, 168, 255, 0.2);
+}
+
+.premium-lock-icon {
+    font-size: 3rem;
+    margin-bottom: 12px;
+    opacity: 0.7;
+}
+
+.premium-teaser h3 {
+    margin-bottom: 12px;
+    color: var(--text-strong);
+}
+
+.premium-features {
+    list-style: none;
+    padding: 0;
+    margin: 16px 0;
+    text-align: left;
+}
+
+.premium-features li {
+    padding: 8px 0;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.premium-upgrade-btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2));
+    color: #001428;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+}
+
+.premium-upgrade-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(78, 168, 255, 0.4);
+}
+
+/* ============================================================================
+   AI Mentor Card
+   ============================================================================ */
+
+.ai-mentor-card {
+    margin-bottom: 20px;
+}
+
+.mentor-chat-preview {
+    text-align: center;
+}
+
+/* ============================================================================
+   Responsive Adjustments
+   ============================================================================ */
+
+@media (max-width: 768px) {
+    .crs-overview {
+        grid-template-columns: 1fr;
+    }
+
+    .crs-main-score {
+        margin-bottom: 16px;
+    }
+
+    .crs-component {
+        grid-template-columns: 100px 1fr 50px;
+    }
+
+    .crs-badge {
+        margin-right: 8px;
+    }
+
+    .crs-badge-content {
+        padding: 4px 8px;
+    }
+}
+
+/* ============================================================================
+   CRS Modal
+   ============================================================================ */
+.crs-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    animation: fadeIn 0.3s forwards;
+}
+
+.crs-modal-content {
+    background: var(--bg1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 32px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    transform: scale(0.95);
+    animation: ModalScaleIn 0.3s forwards;
+}
+
+@keyframes ModalScaleIn {
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.crs-modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.crs-modal-close:hover {
+    color: var(--text-primary);
+}
+
+/* Adjust CRS Card styles for Modal Context */
+.crs-modal-content .crs-card {
+    margin-bottom: 0;
+}
+
+.crs-modal-content .crs-overview {
+    grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 768px) {
+    .crs-modal-content .crs-overview {
+        grid-template-columns: 1fr;
+    }
+}

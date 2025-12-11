@@ -4,41 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="299ca1a7-b660-4333-afc6-cbad61aa6b5d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/api/routes/problems.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/check_db.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/data/problems.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/debug_api.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/models/problem.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/revert_crs.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/test_cases/hidden_tests.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/test_problems.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/utils/fix_starter_code.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/utils/migrate_problems.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/utils/verify_db.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/debug_failures.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/debug_html_nesting.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/debug_tests.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/refactor_main.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/refactor_main_2.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/js/modules/cognitiveAnalysis.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/js/modules/problemHints.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/js/modules/ui/failureScreen.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/js/modules/ui/successScreen.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/js/problems_db.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test_db_api.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/BeatCoders.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/BeatCoders.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/routes/run_code.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/routes/run_code.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/routes/submissions.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/routes/submissions.py" afterDir="false" />
+    <list default="true" id="299ca1a7-b660-4333-afc6-cbad61aa6b5d" name="Changes" comment="added flowchart and fixed bug">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/routes/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/routes/auth.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/config/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/config/database.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/models/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/models/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/beatcoders.db" beforeDir="false" afterPath="$PROJECT_DIR$/beatcoders.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/beatcoders.db" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/dashboard.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/js/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/main.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -93,6 +67,30 @@
       <option name="presentableId" value="Default" />
       <updated>1765186868447</updated>
     </task>
+    <task id="LOCAL-00001" summary="added flowchart and fixed bug">
+      <option name="closed" value="true" />
+      <created>1765302949308</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1765302949308</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="added flowchart and fixed bug" />
+    <option name="LAST_COMMIT_MESSAGE" value="added flowchart and fixed bug" />
   </component>
 </project>

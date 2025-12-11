@@ -123,7 +123,9 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
         "message": "Login successful", 
         "user_id": db_user.user_id, 
         "email": db_user.email,
-        "username": db_user.username
+        "username": db_user.username,
+        "is_premium": db_user.is_premium,
+        "premium_expires": db_user.premium_expires.isoformat() if db_user.premium_expires else None
     }
 
 @router.put("/profile")
