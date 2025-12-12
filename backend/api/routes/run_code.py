@@ -14,6 +14,7 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 from config.database import get_db
 from models.user import User
+from models.submission import Submission
 
 router = APIRouter()
 
@@ -32,6 +33,7 @@ class SubmitCodeRequest(BaseModel):
     language: str = "python"
     problemId: str
     testCases: Optional[List[TestCase]] = []
+    userId: Optional[str] = None
 
 class TestResult(BaseModel):
     caseNumber: int
@@ -246,6 +248,27 @@ async def submit_code(request: SubmitCodeRequest, db: Session = Depends(get_db))
         if all_passed:
             runtime_beats = round(random.uniform(40.0, 99.0), 2)
             memory_beats = round(random.uniform(40.0, 99.0), 2)
+
+
+        
+        # Save submission to database
+        if request.userId:
+            try:
+                status = "accepted" if all_passed else "failed"
+                new_submission = Submission(
+                    user_id=request.userId,
+                    problem_id=request.problemId,
+                    code=request.code,
+                    language=request.language,
+                    status=status,
+                    points=points if all_passed else 0
+                )
+                db.add(new_submission)
+                db.commit()
+                print(f"Saved submission for user {request.userId}, problem {request.problemId}, status {status}")
+            except Exception as e:
+                print(f"Error saving submission: {e}")
+                traceback.print_exc()
 
         return SubmitCodeResponse(
             success=True,

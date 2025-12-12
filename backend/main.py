@@ -46,6 +46,7 @@ from models.problem import Problem
 from models.crs import CRSScore
 from models.skill_roadmap import SkillRoadmap
 from models.mentor_conversation import MentorConversation
+from models.submission import Submission
 Base.metadata.create_all(bind=engine)
 
 # Import and include routers

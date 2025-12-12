@@ -174,6 +174,36 @@ function initApp() {
       acceptance: "-"
     };
 
+    // --- PERSISTENCE INTEGRATION ---
+    // A. Clear and Load History
+    // A. Clear and Load History
+    const historySection = document.getElementById('submissions-history-section');
+    if (historySection) historySection.style.display = 'none'; // Reset visibility
+
+    // Re-bind safely every time
+    const historyBtn = document.getElementById('view-submissions-btn');
+    if (historyBtn) {
+      // Remove old listeners by cloning (simple trick) or just re-assign onclick
+      historyBtn.onclick = (e) => {
+        e.stopPropagation(); // Just in case
+        console.log('History button clicked');
+        if (historySection) {
+          const isHidden = historySection.style.display === 'none';
+          historySection.style.display = isHidden ? 'block' : 'none';
+          if (isHidden) {
+            // Scroll into view if opening
+            historySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            if (window.fetchSubmissionHistory) window.fetchSubmissionHistory(problemTitle);
+          }
+        } else {
+          console.error('History section not found');
+        }
+      };
+    }
+
+    // B. Auto-load history (optional, or just fetch status)
+    // We don't auto-show history, but we can pre-fetch if we wanted.
+
     // Render Initial Test Case Content
     const testCaseContent = document.querySelector('.test-case-content');
     const testCaseTabs = document.querySelectorAll('.test-case-tab');
@@ -287,6 +317,11 @@ function initApp() {
           setTimeout(() => {
             editorInstance.layout();
             editorInstance.focus();
+
+            // Auto-restore last solution if available
+            if (window.fetchAndRestoreLatestCode) {
+              window.fetchAndRestoreLatestCode(problemTitle);
+            }
           }, 100);
 
           document.dispatchEvent(new CustomEvent('monaco-loaded', { detail: { editor: editorInstance } }));

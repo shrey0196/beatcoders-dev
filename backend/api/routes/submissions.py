@@ -271,3 +271,111 @@ async def _analyze_without_tests(submission_id: str, code: str, language: str, p
             tests_total=0,
             test_results=[]
         )
+
+
+# Database-backed endpoints
+
+from sqlalchemy.orm import Session
+from fastapi import Depends
+from config.database import get_db
+from models.submission import Submission
+from typing import List
+
+class SubmissionStatus(BaseModel):
+    problem_id: str
+    status: str
+    points: int
+    language: str
+
+class SubmissionHistoryItem(BaseModel):
+    id: int
+    problem_id: str
+    code: str
+    language: str
+    status: str
+    points: int
+    created_at: datetime
+
+@router.get("/status/{user_id}", response_model=Dict[str, SubmissionStatus])
+async def get_user_problem_status(user_id: str, db: Session = Depends(get_db)):
+    """
+    Get status of all problems for a user
+    Returns: {problem_id: {status: 'accepted', points: 100, ...}}
+    """
+    # Get all submissions for user
+    submissions = db.query(Submission).filter(Submission.user_id == user_id).all()
+    
+    status_map = {}
+    
+    for sub in submissions:
+        # If problem already in map, only update if this submission is 'accepted' 
+        # or if it's newer (for history tracking, but for status we care about 'accepted')
+        
+        # Simple logic: If we have an accepted submission, the problem is solved.
+        # Use the best score.
+        
+        if sub.problem_id not in status_map:
+            status_map[sub.problem_id] = SubmissionStatus(
+                problem_id=sub.problem_id,
+                status=sub.status,
+                points=sub.points,
+                language=sub.language
+            )
+        else:
+            current = status_map[sub.problem_id]
+            # Update if new one is accepted and current is not, or if new one has more points
+            if (sub.status == 'accepted' and current.status != 'accepted') or \
+               (sub.status == 'accepted' and sub.points > current.points):
+                status_map[sub.problem_id] = SubmissionStatus(
+                    problem_id=sub.problem_id,
+                    status=sub.status,
+                    points=sub.points,
+                    language=sub.language
+                )
+    
+    return status_map
+
+@router.get("/history/{user_id}/{problem_id}", response_model=List[SubmissionHistoryItem])
+async def get_submission_history(user_id: str, problem_id: str, db: Session = Depends(get_db)):
+    """
+    Get submission history for a specific problem
+    """
+    submissions = db.query(Submission).filter(
+        Submission.user_id == user_id,
+        Submission.problem_id == problem_id
+    ).order_by(Submission.created_at.desc()).all()
+    
+    return [
+        SubmissionHistoryItem(
+            id=s.id,
+            problem_id=s.problem_id,
+            code=s.code,
+            language=s.language,
+            status=s.status,
+            points=s.points,
+            created_at=s.created_at
+        )
+        for s in submissions
+    ]
+
+@router.get("/all/{user_id}", response_model=List[SubmissionHistoryItem])
+async def get_all_user_submissions(user_id: str, limit: int = 50, db: Session = Depends(get_db)):
+    """
+    Get all recent submissions for a user across all problems
+    """
+    submissions = db.query(Submission).filter(
+        Submission.user_id == user_id
+    ).order_by(Submission.created_at.desc()).limit(limit).all()
+
+    return [
+        SubmissionHistoryItem(
+            id=s.id,
+            problem_id=s.problem_id,
+            code=s.code,  # Might want to exclude code for list view if heavy, but ok for now
+            language=s.language,
+            status=s.status,
+            points=s.points,
+            created_at=s.created_at,
+        )
+        for s in submissions
+    ]

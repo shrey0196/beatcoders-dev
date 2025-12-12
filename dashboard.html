@@ -2723,7 +2723,7 @@
       const savedEmail = localStorage.getItem('beatCodersEmail');
 
       // User settings management
-      let userSettings = {};
+      window.userSettings = {};
 
       function loadUserSettings() {
         const storedSettings = JSON.parse(localStorage.getItem('beatCodersUserSettings'));
@@ -2746,7 +2746,7 @@
         if (storedSettings) {
           finalSettings = { ...finalSettings, ...storedSettings };
         }
-        userSettings = finalSettings;
+        window.userSettings = finalSettings;
       }
 
       function saveUserSettings() {
@@ -2904,7 +2904,56 @@
       };
       const mainViews = document.querySelectorAll('main > div[id$="-view"]');
 
+      // --- Global Submissions Logic ---
+      async function fetchGlobalSubmissions() {
+        const tableBody = document.querySelector('.submissions-table tbody');
+        if (!tableBody) return;
+
+        if (!window.userSettings || !window.userSettings.userID) {
+          tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px;">Please login to view submissions.</td></tr>';
+          return;
+        }
+
+        // Show loading state
+        tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px; color: var(--text-secondary);">Loading submissions...</td></tr>';
+
+        try {
+          const response = await fetch(`/api/submissions/all/${window.userSettings.userID}`);
+          if (response.ok) {
+            const submissions = await response.json();
+            if (submissions.length === 0) {
+              tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px; color: var(--text-secondary);">No submissions found.</td></tr>';
+              return;
+            }
+
+            tableBody.innerHTML = submissions.map(s => {
+              const statusClass = s.status === 'accepted' ? 'status-accepted' : 'status-ignored'; // Use existing class or style
+              const statusColor = s.status === 'accepted' ? 'var(--green)' : 'var(--red)';
+              const statusText = s.status.charAt(0).toUpperCase() + s.status.slice(1);
+              const timeString = new Date(s.created_at).toLocaleString();
+              const title = s.problem_id || 'Unknown Problem';
+
+              return `
+                <tr>
+                  <td>${title}</td>
+                  <td><span style="color: ${statusColor}; font-weight: 600;">${statusText}</span></td>
+                  <td>${s.language}</td>
+                  <td style="color: var(--text-secondary);">${timeString}</td>
+                  <td class="points-earned" style="color: var(--accent1); font-weight: 700;">${s.points}</td>
+                </tr>
+              `;
+            }).join('');
+          } else {
+            tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px; color: var(--red);">Failed to load submissions.</td></tr>';
+          }
+        } catch (e) {
+          console.error(e);
+          tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px; color: var(--red);">Error loading submissions.</td></tr>';
+        }
+      }
+
       function showMainView(viewId) {
+        console.log('[Nav] Switching to view:', viewId);
         navItems.forEach(i => i.classList.remove('active'));
         const correspondingNavItem = document.querySelector(`.nav-item[data-view="${viewId}"]`);
         if (correspondingNavItem) {
@@ -2920,6 +2969,7 @@
         else if (viewId === 'practice-view') initPracticeView();
         else if (viewId === 'rewards-view') generateRewards();
         else if (viewId === 'settings-view') initSettingsView();
+        else if (viewId === 'submissions-view') fetchGlobalSubmissions();
       }
       window.showMainView = showMainView;
 
@@ -2932,6 +2982,57 @@
 
       if (dropdownItems.rewardsBtn) dropdownItems.rewardsBtn.addEventListener('click', () => showMainView('rewards-view'));
       if (dropdownItems.settingsBtn) dropdownItems.settingsBtn.addEventListener('click', () => showMainView('settings-view'));
+
+      // --- Global Submissions Logic ---
+      async function fetchGlobalSubmissions() {
+        const tableBody = document.querySelector('.submissions-table tbody');
+        if (!tableBody) return;
+
+        if (!userSettings.userID) {
+          tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px;">Please login to view submissions.</td></tr>';
+          return;
+        }
+
+        // Show loading state
+        tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px; color: var(--text-secondary);">Loading submissions...</td></tr>';
+
+        try {
+          const response = await fetch(`/api/submissions/all/${userSettings.userID}`);
+          if (response.ok) {
+            const history = await response.json();
+            if (history.length === 0) {
+              tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px; color: var(--text-secondary);">No submissions found. Start practicing!</td></tr>';
+              return;
+            }
+
+            tableBody.innerHTML = history.map(sub => {
+              const timeString = new Date(sub.created_at).toLocaleString();
+              const statusClass = sub.status === 'accepted' ? 'status-accepted' : 'status-wrong';
+              const statusText = sub.status === 'accepted' ? 'Accepted' : (sub.status === 'pending' ? 'Pending' : 'Wrong Answer');
+              const points = sub.status === 'accepted' ? `+${sub.points}` : '0';
+              const statusColor = sub.status === 'accepted' ? '#22c55e' : '#ef4444';
+
+              // Format logic: Title casing or lookup
+              const displayTitle = sub.problem_id.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+
+              return `
+                    <tr>
+                        <td style="font-weight: 500; color: var(--text-primary);">${displayTitle}</td>
+                        <td class="${statusClass}" style="color: ${statusColor}; font-weight: 600;">${statusText}</td>
+                        <td style="color: var(--text-secondary);">${sub.language}</td>
+                        <td style="color: var(--text-secondary);">${timeString}</td>
+                        <td class="points-earned" style="color: var(--accent1); font-weight: 700;">${points}</td>
+                    </tr>
+                   `;
+            }).join('');
+          } else {
+            tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px; color: var(--red);">Failed to load submissions.</td></tr>';
+          }
+        } catch (e) {
+          console.error(e);
+          tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px; color: var(--red);">Error loading submissions.</td></tr>';
+        }
+      }
 
       // --- Leaderboard Generation ---
       function generateLeaderboard() {
@@ -3058,6 +3159,42 @@
         { title: "Clone Graph", topic: "Graphs", difficulty: "Medium", acceptance: "55.8%" }, { title: "Pacific Atlantic Water Flow", topic: "Graphs", difficulty: "Medium", acceptance: "56.4%" },
       ];
 
+      // --- Persistence Logic ---
+      let solvedProblemsMap = {};
+
+      async function fetchSolvedStatus() {
+        if (!window.userSettings || !window.userSettings.userID) return;
+        try {
+          const response = await fetch(`/api/submissions/status/${window.userSettings.userID}`);
+          if (response.ok) {
+            solvedProblemsMap = await response.json();
+            // If practice view is active, we might want to re-render, but for now initPracticeView calls this.
+          }
+        } catch (e) {
+          console.error('Failed to fetch solved status:', e);
+        }
+      }
+
+
+      // Restore latest code
+      window.fetchAndRestoreLatestCode = async function (problemId) {
+        if (!userSettings.userID || !window.editorInstance) return;
+        try {
+          const response = await fetch(`/api/submissions/history/${userSettings.userID}/${encodeURIComponent(problemId)}`);
+          if (response.ok) {
+            const history = await response.json();
+            if (history.length > 0) {
+              const latest = history[0];
+              console.log('[Restore] Restoring latest submission:', latest.id);
+              // Use setValue to update editor content
+              window.editorInstance.setValue(latest.code);
+            }
+          }
+        } catch (e) {
+          console.error('Failed to restore code:', e);
+        }
+      };
+
       function initPracticeView() {
         if (practiceViewInitialized) return;
         const topicFiltersContainer = document.getElementById('topic-filters');
@@ -3065,11 +3202,26 @@
         const searchInput = document.getElementById('problem-search-input');
         if (!topicFiltersContainer || !problemsTableBody || !searchInput) return;
 
+        // Fetch status initially
+        fetchSolvedStatus().then(() => renderProblems());
+
         let currentTopic = 'All Problems'; let searchTerm = '';
 
         function renderProblems() {
           const filteredProblems = problemsData.filter(p => (currentTopic === 'All Problems' || p.topic === currentTopic) && p.title.toLowerCase().includes(searchTerm.toLowerCase()));
-          problemsTableBody.innerHTML = filteredProblems.map(p => `<tr onclick="window.openCodeEditor('${p.title}')" style="cursor: pointer;"><td>${p.title}</td><td><span class="difficulty-tag ${p.difficulty.toLowerCase()}">${p.difficulty}</span></td><td>${p.acceptance}</td></tr>`).join('');
+          problemsTableBody.innerHTML = filteredProblems.map(p => {
+            const isSolved = solvedProblemsMap[p.title] && solvedProblemsMap[p.title].status === 'accepted';
+            return `<tr onclick="window.openCodeEditor('${p.title}')" style="cursor: pointer;">
+                <td>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        ${p.title}
+                        ${isSolved ? '<span style="color: #22c55e; font-size: 1.1em;" title="Solved">✓</span>' : ''}
+                    </div>
+                </td>
+                <td><span class="difficulty-tag ${p.difficulty.toLowerCase()}">${p.difficulty}</span></td>
+                <td>${p.acceptance}</td>
+              </tr>`;
+          }).join('');
         }
 
         function populateTopicFilters() {
@@ -3189,8 +3341,14 @@
             style="width:100%; height:400px; border:1px solid var(--border-color); border-radius:8px;"></div>
           <!-- Hidden textarea for fallback/form submission if needed -->
           <textarea id="code-editor" style="display:none;"></textarea>
-          <button class="submit-btn" id="submit-code-btn">Submit Solution</button>
+          <div style="display: flex; gap: 10px; margin-top: 15px;">
+            <button class="submit-btn" id="submit-code-btn" style="flex: 1;">Submit Solution</button>
+
+          </div>
         </div>
+
+
+
         <div class="feedback-section" id="feedback-section" style="display: none;">
           <h3>Analysis Results</h3>
           <div id="feedback-content"></div>
@@ -3769,6 +3927,7 @@
             <option value="java">Java</option>
             <option value="cpp">C++</option>
           </select>
+
           <div style="flex: 1;"></div>
           <button class="btn-icon" title="Reset Code" id="reset-code-btn">
             <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -4103,13 +4262,23 @@
             const response = await fetch('/api/submit-code', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ code, language: 'python', problemId: title, testCases })
+              body: JSON.stringify({
+                code,
+                language: 'python',
+                problemId: title,
+                testCases,
+                userId: (window.userSettings && window.userSettings.userID) || window.currentUserId
+              })
             });
             const data = await response.json();
 
             if (data.success) {
               if (data.allPassed) {
                 showSuccess(data, code);
+
+                // REFRESH HISTORY & STATUS
+                if (window.fetchSolvedStatus) window.fetchSolvedStatus();
+                if (window.fetchSubmissionHistory) window.fetchSubmissionHistory(title);
 
                 // TRIGGER CRS UPDATE
                 if (window.CRSModule && window.currentUserId) {
