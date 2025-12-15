@@ -921,10 +921,16 @@
     /* --- PRACTICE VIEW --- */
     .practice-controls {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 20px;
+      flex-direction: column;
+      gap: 16px;
       margin-bottom: 20px;
+    }
+
+    .topic-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
     }
 
     .topic-filters-container {
@@ -936,8 +942,9 @@
       display: flex;
       gap: 8px;
       padding-bottom: 8px;
-      /* For scrollbar */
       overflow-x: auto;
+      scroll-behavior: smooth;
+      /* Hide scrollbar */
       -ms-overflow-style: none;
       /* IE and Edge */
       scrollbar-width: none;
@@ -946,9 +953,8 @@
 
     .topic-filters::-webkit-scrollbar {
       display: none;
+      /* Chrome, Safari, Opera */
     }
-
-    /* Chrome, Safari, Opera */
 
     .topic-filter-btn {
       padding: 8px 16px;
@@ -966,6 +972,354 @@
       border-color: rgba(0, 0, 0, 0.1);
     }
 
+    .search-row {
+      width: 100%;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      position: relative;
+    }
+
+    .filter-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background-color: var(--glass-2);
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .filter-btn:hover {
+      background-color: var(--glass);
+      color: var(--accent1);
+      border-color: var(--accent1);
+      transform: translateY(-1px);
+    }
+
+    .filter-btn.active {
+      background-color: var(--accent1);
+      color: #001428;
+      border-color: var(--accent1);
+    }
+
+    body.light-mode .filter-btn {
+      border-color: rgba(0, 0, 0, 0.1);
+      background-color: rgba(0, 0, 0, 0.02);
+    }
+
+    body.light-mode .filter-btn:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    /* Filter Dropdown */
+    .search-row {
+      position: relative;
+    }
+
+    .filter-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      width: 320px;
+      max-height: 500px;
+      overflow: hidden;
+      /* Changed from overflow-y: auto to prevent submenu clipping */
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 16px;
+      display: none;
+      flex-direction: column;
+      z-index: 1000;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .filter-dropdown.show {
+      display: flex;
+      animation: slideDown 0.2s ease;
+    }
+
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    body.light-mode .filter-dropdown {
+      background: rgba(255, 255, 255, 0.95);
+      border-color: rgba(0, 0, 0, 0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Filter Header */
+    .filter-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    body.light-mode .filter-header {
+      border-bottom-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .filter-header h3 {
+      color: var(--text-strong);
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .clear-filters-btn {
+      background: none;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-secondary);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .clear-filters-btn:hover {
+      background-color: var(--glass-2);
+      color: var(--accent1);
+      border-color: var(--accent1);
+    }
+
+    body.light-mode .clear-filters-btn {
+      border-color: rgba(0, 0, 0, 0.1);
+    }
+
+    /* Filter Categories */
+    .filter-categories {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .filter-category-btn {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 14px;
+      background: var(--glass-2);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 14px;
+    }
+
+    .filter-category-btn:hover {
+      background: var(--glass);
+      border-color: var(--accent1);
+      color: var(--accent1);
+    }
+
+    .filter-category-btn svg {
+      flex-shrink: 0;
+    }
+
+    body.light-mode .filter-category-btn {
+      background: rgba(0, 0, 0, 0.02);
+      border-color: rgba(0, 0, 0, 0.1);
+    }
+
+    body.light-mode .filter-category-btn:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    /* Filter Submenus */
+    .filter-submenu {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .filter-submenu.show {
+      display: flex;
+      animation: slideInRight 0.2s ease;
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    body.light-mode .filter-submenu {
+      background: rgba(255, 255, 255, 0.95);
+    }
+
+    .submenu-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    body.light-mode .submenu-header {
+      border-bottom-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .submenu-header h4 {
+      color: var(--text-strong);
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0;
+      flex: 1;
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .back-btn:hover {
+      background: var(--glass-2);
+      color: var(--accent1);
+    }
+
+    .submenu-options {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .filter-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: background 0.2s ease;
+      margin-bottom: 4px;
+    }
+
+    .filter-option:hover {
+      background: var(--glass-2);
+    }
+
+    body.light-mode .filter-option:hover {
+      background: rgba(0, 0, 0, 0.03);
+    }
+
+    .filter-option input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      accent-color: var(--accent1);
+    }
+
+    .filter-option span {
+      color: var(--text-primary);
+      font-size: 14px;
+      user-select: none;
+    }
+
+    .filter-topics-list {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    /* Custom scrollbar for filter dropdown */
+    .filter-dropdown::-webkit-scrollbar,
+    .filter-topics-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .filter-dropdown::-webkit-scrollbar-track,
+    .filter-topics-list::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .filter-dropdown::-webkit-scrollbar-thumb,
+    .filter-topics-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+
+    .filter-dropdown::-webkit-scrollbar-thumb:hover,
+    .filter-topics-list::-webkit-scrollbar-thumb:hover {
+      background: var(--accent1);
+    }
+
+    body.light-mode .filter-dropdown::-webkit-scrollbar-thumb,
+    body.light-mode .filter-topics-list::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .topic-scroll-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background-color: var(--glass-2);
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .topic-scroll-btn:hover {
+      background-color: var(--glass);
+      color: var(--accent1);
+      border-color: var(--accent1);
+      transform: scale(1.05);
+    }
+
+    .topic-scroll-btn:active {
+      transform: scale(0.95);
+    }
+
+    body.light-mode .topic-scroll-btn {
+      border-color: rgba(0, 0, 0, 0.1);
+      background-color: rgba(0, 0, 0, 0.02);
+    }
+
+    body.light-mode .topic-scroll-btn:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
     .topic-filter-btn:hover {
       background-color: var(--glass);
       color: var(--text-strong);
@@ -978,8 +1332,10 @@
     }
 
     .search-input {
-      width: 250px;
-      padding: 10px 14px;
+      width: 100%;
+      padding: 12px 16px;
+      /* Padding right for clear button */
+      padding-right: 40px;
       background-color: var(--glass-2);
       border: 1px solid rgba(255, 255, 255, 0.05);
       color: var(--text-primary);
@@ -991,6 +1347,42 @@
     .search-input:focus {
       border-color: var(--accent1);
       background-color: var(--bg1);
+    }
+
+    /* Wrapper for Search Input + Clear Button */
+    .search-bar-wrapper {
+      position: relative;
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .clear-search-btn {
+      position: absolute;
+      right: 12px;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: none;
+      /* Hidden by default */
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .clear-search-btn:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+    }
+
+    body.light-mode .clear-search-btn:hover {
+      background-color: rgba(0, 0, 0, 0.05);
     }
 
     body.light-mode .search-input {
@@ -1933,6 +2325,81 @@
       cursor: pointer;
       /* Ensure it's not hidden by light mode variables */
     }
+
+    /* Custom Checkbox Styles */
+    .custom-checkbox {
+      position: relative;
+      display: inline-block;
+      cursor: pointer;
+      user-select: none;
+      width: 20px;
+      height: 20px;
+    }
+
+    .custom-checkbox input[type="checkbox"] {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      height: 0;
+      width: 0;
+    }
+
+    .custom-checkbox .checkmark {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 20px;
+      width: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(4px);
+    }
+
+    body.light-mode .custom-checkbox .checkmark {
+      background: rgba(0, 0, 0, 0.03);
+      border: 2px solid rgba(0, 0, 0, 0.15);
+    }
+
+    .custom-checkbox:hover .checkmark {
+      border-color: var(--green);
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .custom-checkbox input[type="checkbox"]:checked~.checkmark {
+      background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+      border-color: #15803d;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+
+    .custom-checkbox .checkmark:after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 48%;
+      width: 22px;
+      height: 22px;
+      /* White Checkmark for Professional Contrast */
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+      background-size: contain;
+      background-repeat: no-repeat;
+      transform: translate(-50%, -50%) scale(0) rotate(-10deg);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
+    }
+
+    .custom-checkbox input[type="checkbox"]:checked~.checkmark:after {
+      transform: translate(-50%, -50%) scale(1) rotate(0deg);
+      opacity: 1;
+    }
+
+    /* Checkbox focus state for accessibility */
+    .custom-checkbox input[type="checkbox"]:focus~.checkmark {
+      box-shadow: 0 0 0 2px var(--bg1), 0 0 0 4px var(--green);
+    }
   </style>
   <script src="static/js/lib/mermaid.min.js"></script>
   <script>mermaid.initialize({ startOnLoad: true, theme: 'dark' });</script>
@@ -2179,22 +2646,153 @@
             Filter by topic or search by name to find your next challenge.
           </p>
           <div class="practice-controls">
-            <div class="topic-filters-container">
-              <div class="topic-filters" id="topic-filters">
-                <!-- Dynamically populated -->
+            <div class="topic-row">
+              <button class="topic-scroll-btn" id="scroll-left-btn" title="Scroll left">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+              </button>
+              <div class="topic-filters-container">
+                <div class="topic-filters" id="topic-filters">
+                  <!-- Dynamically populated -->
+                </div>
               </div>
+              <button class="topic-scroll-btn" id="scroll-right-btn" title="Scroll right">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
             </div>
-            <div class="search-container">
-              <input type="text" id="problem-search-input" class="search-input" placeholder="Search by name...">
+            <div class="search-row">
+              <div class="search-bar-wrapper">
+                <input type="text" id="problem-search-input" class="search-input" placeholder="Search by name...">
+                <button type="button" id="clear-search-btn" class="clear-search-btn"
+                  title="Clear search">&times;</button>
+              </div>
+              <button class="filter-btn" id="filter-btn" title="Filter options">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                </svg>
+              </button>
+              <!-- Filter Dropdown Panel -->
+              <div class="filter-dropdown" id="filter-dropdown">
+                <div class="filter-header">
+                  <h3>Filters</h3>
+                  <button class="clear-filters-btn" id="clear-filters-btn">Clear All</button>
+                </div>
+
+                <!-- Filter Category Buttons -->
+                <div class="filter-categories" id="filter-categories">
+                  <button class="filter-category-btn" id="status-filter-btn">
+                    <span>Status</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                  </button>
+
+                  <button class="filter-category-btn" id="difficulty-filter-btn">
+                    <span>Difficulty</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                  </button>
+
+                  <button class="filter-category-btn" id="topics-filter-btn">
+                    <span>Topics</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                  </button>
+                </div>
+
+                <!-- Status Submenu -->
+                <div class="filter-submenu" id="status-submenu">
+                  <div class="submenu-header">
+                    <button class="back-btn" data-submenu="status">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                      </svg>
+                      Back
+                    </button>
+                    <h4>Status</h4>
+                  </div>
+                  <div class="submenu-options">
+                    <label class="filter-option">
+                      <input type="checkbox" class="filter-status" value="solved">
+                      <span>Solved</span>
+                    </label>
+                    <label class="filter-option">
+                      <input type="checkbox" class="filter-status" value="unsolved">
+                      <span>Unsolved</span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Difficulty Submenu -->
+                <div class="filter-submenu" id="difficulty-submenu">
+                  <div class="submenu-header">
+                    <button class="back-btn" data-submenu="difficulty">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                      </svg>
+                      Back
+                    </button>
+                    <h4>Difficulty</h4>
+                  </div>
+                  <div class="submenu-options">
+                    <label class="filter-option">
+                      <input type="checkbox" class="filter-difficulty" value="Easy">
+                      <span>Easy</span>
+                    </label>
+                    <label class="filter-option">
+                      <input type="checkbox" class="filter-difficulty" value="Medium">
+                      <span>Medium</span>
+                    </label>
+                    <label class="filter-option">
+                      <input type="checkbox" class="filter-difficulty" value="Hard">
+                      <span>Hard</span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Topics Submenu -->
+                <div class="filter-submenu" id="topics-submenu">
+                  <div class="submenu-header">
+                    <button class="back-btn" data-submenu="topics">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                      </svg>
+                      Back
+                    </button>
+                    <h4>Topics</h4>
+                  </div>
+                  <div class="submenu-options">
+                    <div id="filter-topics-list" class="filter-topics-list">
+                      <!-- Dynamically populated -->
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div class="table-container">
             <table class="problems-table">
               <thead>
                 <tr>
-                  <th>Title</th>
-                  <th>Difficulty</th>
-                  <th>Acceptance</th>
+                  <th style="width: 1%; padding-left: 0; padding-right: 10px;"></th>
+                  <th style="width: 1%; white-space: nowrap; text-align: center; padding-right: 10px;">No.</th>
+                  <th style="padding-left: 0;">Title</th>
+                  <th style="width: 120px;">Difficulty</th>
+                  <th style="width: 120px;">Acceptance</th>
                 </tr>
               </thead>
               <tbody id="problems-table-body">
@@ -3200,22 +3798,94 @@
         const topicFiltersContainer = document.getElementById('topic-filters');
         const problemsTableBody = document.getElementById('problems-table-body');
         const searchInput = document.getElementById('problem-search-input');
+        const clearSearchBtn = document.getElementById('clear-search-btn'); // Get Reference
+
         if (!topicFiltersContainer || !problemsTableBody || !searchInput) return;
 
         // Fetch status initially
         fetchSolvedStatus().then(() => renderProblems());
 
-        let currentTopic = 'All Problems'; let searchTerm = '';
+        let currentTopic = 'All Problems';
+        let searchTerm = '';
+
+        // Search Logic with Debounce and Clear Button
+        searchInput.addEventListener('input', (e) => {
+          searchTerm = e.target.value;
+
+          // Toggle Clear Button Visibility
+          if (clearSearchBtn) {
+            clearSearchBtn.style.display = searchTerm.length > 0 ? 'flex' : 'none';
+          }
+
+          renderProblems();
+        });
+
+        // Clear Button Click Handler
+        if (clearSearchBtn) {
+          clearSearchBtn.addEventListener('click', () => {
+            searchTerm = '';
+            searchInput.value = '';
+            clearSearchBtn.style.display = 'none';
+            searchInput.focus();
+            renderProblems();
+          });
+        }
+        let currentFilters = {
+          status: [],
+          difficulty: [],
+          topics: []
+        };
 
         function renderProblems() {
-          const filteredProblems = problemsData.filter(p => (currentTopic === 'All Problems' || p.topic === currentTopic) && p.title.toLowerCase().includes(searchTerm.toLowerCase()));
-          problemsTableBody.innerHTML = filteredProblems.map(p => {
+          const filteredProblems = problemsData.filter(p => {
+            // Text search
+            if (searchTerm && !p.title.toLowerCase().includes(searchTerm.toLowerCase())) {
+              return false;
+            }
+
+            // Topic filter (from topic buttons)
+            if (currentTopic !== 'All Problems' && p.topic !== currentTopic) {
+              return false;
+            }
+
+            // Status filter
+            if (currentFilters.status.length > 0) {
+              const isSolved = solvedProblemsMap[p.title]?.status === 'accepted';
+              const statusMatch = currentFilters.status.some(s =>
+                (s === 'solved' && isSolved) || (s === 'unsolved' && !isSolved)
+              );
+              if (!statusMatch) return false;
+            }
+
+            // Difficulty filter
+            if (currentFilters.difficulty.length > 0) {
+              if (!currentFilters.difficulty.includes(p.difficulty)) {
+                return false;
+              }
+            }
+
+            // Topics filter (from dropdown)
+            if (currentFilters.topics.length > 0) {
+              if (!currentFilters.topics.includes(p.topic)) {
+                return false;
+              }
+            }
+
+            return true;
+          });
+          problemsTableBody.innerHTML = filteredProblems.map((p, index) => {
             const isSolved = solvedProblemsMap[p.title] && solvedProblemsMap[p.title].status === 'accepted';
             return `<tr onclick="window.openCodeEditor('${p.title}')" style="cursor: pointer;">
-                <td>
+                <td style="text-align: center; padding-left: 0; padding-right: 10px;">
+                  ${isSolved ? `<label class="custom-checkbox" onclick="event.stopPropagation()" style="cursor: default;">
+                    <input type="checkbox" class="problem-solved-checkbox" data-problem="${p.title}" checked disabled>
+                    <span class="checkmark"></span>
+                  </label>` : ''}
+                </td>
+                <td style="text-align: center; padding-right: 10px; color: var(--text-secondary); white-space: nowrap;">${index + 1}</td>
+                <td style="padding-left: 0; white-space: nowrap;">
                     <div style="display: flex; align-items: center; gap: 8px;">
                         ${p.title}
-                        ${isSolved ? '<span style="color: #22c55e; font-size: 1.1em;" title="Solved">✓</span>' : ''}
                     </div>
                 </td>
                 <td><span class="difficulty-tag ${p.difficulty.toLowerCase()}">${p.difficulty}</span></td>
@@ -3237,8 +3907,173 @@
           });
         }
 
+        // Scroll button functionality
+        const scrollLeftBtn = document.getElementById('scroll-left-btn');
+        const scrollRightBtn = document.getElementById('scroll-right-btn');
+
+        if (scrollLeftBtn) {
+          scrollLeftBtn.addEventListener('click', () => {
+            topicFiltersContainer.scrollBy({ left: -200, behavior: 'smooth' });
+          });
+        }
+
+        if (scrollRightBtn) {
+          scrollRightBtn.addEventListener('click', () => {
+            topicFiltersContainer.scrollBy({ left: 200, behavior: 'smooth' });
+          });
+        }
+
+        // Filter dropdown functionality
+        const filterBtn = document.getElementById('filter-btn');
+        const filterDropdown = document.getElementById('filter-dropdown');
+        const clearFiltersBtn = document.getElementById('clear-filters-btn');
+        const filterCategories = document.getElementById('filter-categories');
+        const filterHeader = filterDropdown?.querySelector('.filter-header');
+
+        if (filterBtn && filterDropdown) {
+          // Show/hide submenu functions (defined first)
+          function showSubmenu(submenuName) {
+            // Hide main menu elements
+            if (filterHeader) filterHeader.style.display = 'none';
+            filterCategories.style.display = 'none';
+
+            // Show submenu
+            const submenu = document.getElementById(`${submenuName}-submenu`);
+            if (submenu) {
+              submenu.classList.add('show');
+            }
+          }
+
+          function showMainMenu() {
+            // Show main menu elements
+            if (filterHeader) filterHeader.style.display = 'flex';
+            filterCategories.style.display = 'flex';
+
+            // Hide all submenus
+            const submenus = filterDropdown.querySelectorAll('.filter-submenu');
+            submenus.forEach(submenu => {
+              submenu.classList.remove('show');
+            });
+          }
+
+          // Toggle filter dropdown
+          filterBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            filterDropdown.classList.toggle('show');
+            filterBtn.classList.toggle('active');
+
+            // Reset to main menu when opening
+            if (filterDropdown.classList.contains('show')) {
+              showMainMenu();
+            }
+          });
+
+          // Close dropdown when clicking outside
+          document.addEventListener('click', (e) => {
+            if (!filterDropdown.contains(e.target) && e.target !== filterBtn) {
+              filterDropdown.classList.remove('show');
+              filterBtn.classList.remove('active');
+              showMainMenu(); // Reset to main menu
+            }
+          });
+
+          // Category button handlers
+          const statusBtn = document.getElementById('status-filter-btn');
+          const difficultyBtn = document.getElementById('difficulty-filter-btn');
+          const topicsBtn = document.getElementById('topics-filter-btn');
+
+          if (statusBtn) {
+            statusBtn.addEventListener('click', () => showSubmenu('status'));
+          }
+          if (difficultyBtn) {
+            difficultyBtn.addEventListener('click', () => showSubmenu('difficulty'));
+          }
+          if (topicsBtn) {
+            topicsBtn.addEventListener('click', () => showSubmenu('topics'));
+          }
+
+          // Back button handlers
+          const backBtns = filterDropdown.querySelectorAll('.back-btn');
+          backBtns.forEach(btn => {
+            btn.addEventListener('click', () => showMainMenu());
+          });
+        }
+
+        // Populate filter topics
+        function populateFilterTopics() {
+          const topics = [...new Set(problemsData.map(p => p.topic))];
+          const topicsList = document.getElementById('filter-topics-list');
+
+          if (topicsList) {
+            topicsList.innerHTML = topics.map(topic => `
+              <label class="filter-option">
+                <input type="checkbox" class="filter-topic-checkbox" value="${topic}">
+                <span>${topic}</span>
+              </label>
+            `).join('');
+
+            // Add event listeners to topic checkboxes
+            topicsList.querySelectorAll('input').forEach(checkbox => {
+              checkbox.addEventListener('change', handleFilterChange);
+            });
+          }
+        }
+
+        // Handle filter changes
+        function handleFilterChange(e) {
+          const { value, checked } = e.target;
+
+          if (e.target.classList.contains('filter-status')) {
+            if (checked) {
+              currentFilters.status.push(value);
+            } else {
+              currentFilters.status = currentFilters.status.filter(s => s !== value);
+            }
+          } else if (e.target.classList.contains('filter-difficulty')) {
+            if (checked) {
+              currentFilters.difficulty.push(value);
+            } else {
+              currentFilters.difficulty = currentFilters.difficulty.filter(d => d !== value);
+            }
+          } else if (e.target.classList.contains('filter-topic-checkbox')) {
+            if (checked) {
+              currentFilters.topics.push(value);
+            } else {
+              currentFilters.topics = currentFilters.topics.filter(t => t !== value);
+            }
+          }
+
+          renderProblems();
+        }
+
+        // Clear all filters
+        if (clearFiltersBtn) {
+          clearFiltersBtn.addEventListener('click', () => {
+            currentFilters = {
+              status: [],
+              difficulty: [],
+              topics: []
+            };
+
+            // Uncheck all filter checkboxes
+            filterDropdown.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+              cb.checked = false;
+            });
+
+            renderProblems();
+          });
+        }
+
+        // Add event listeners to status and difficulty filters
+        filterDropdown.querySelectorAll('.filter-status, .filter-difficulty').forEach(checkbox => {
+          checkbox.addEventListener('change', handleFilterChange);
+        });
+
         searchInput.addEventListener('input', (e) => { searchTerm = e.target.value; renderProblems(); });
-        populateTopicFilters(); renderProblems(); practiceViewInitialized = true;
+        populateTopicFilters();
+        populateFilterTopics();
+        renderProblems();
+        practiceViewInitialized = true;
       }
 
       // --- Rewards View Logic ---
@@ -4373,7 +5208,7 @@
   <script src="static/js/cognitive/VisualDebugger.js?v=3"></script>
   <script src="static/js/modules/problemHints.js?v=1"></script>
   <script src="static/js/problems_db.js?v=1"></script>
-  <script src="static/js/main.js?v=1001"></script>
+  <script src="static/js/main.js?v=1002"></script>
 
   <style>
     /* FORCE OVERRIDES FOR LIGHT MODE VISIBILITY */

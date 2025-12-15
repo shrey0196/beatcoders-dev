@@ -139,16 +139,26 @@ function initApp() {
     if (!tableBody) return;
 
     tableBody.innerHTML = '';
-    problems.forEach(problem => {
+    problems.forEach((problem, index) => {
       const row = document.createElement('tr');
       row.innerHTML = `
+        <td style="text-align: center; color: var(--text-secondary);">${index + 1}</td>
+        <td style="text-align: center;">
+          <label class="custom-checkbox" style="cursor: default;">
+            <input type="checkbox" class="problem-solved-checkbox" data-problem="${problem.title}" disabled>
+            <span class="checkmark"></span>
+          </label>
+        </td>
         <td>${problem.title}</td>
         <td><span class="difficulty-tag ${problem.difficulty.toLowerCase()}">${problem.difficulty}</span></td>
         <td>${problem.acceptance}</td>
       `;
       row.style.cursor = 'pointer';
 
-      row.addEventListener('click', () => {
+      row.addEventListener('click', (e) => {
+        // Don't open editor if clicking on checkbox
+        if (e.target.closest('.custom-checkbox')) return;
+
         console.log('Problem row clicked:', problem.title);
         if (window.openCodeEditor) {
           window.openCodeEditor(problem.title);
