@@ -19,12 +19,16 @@ def create_test_user():
     
     try:
         # Check if test user already exists
-        existing = db.query(User).filter(User.email == "test@beatcoders.com").first()
+        existing = db.query(User).filter(User.user_id == "test123").first()
         if existing:
-            print("❌ Test user already exists!")
-            print(f"   User ID: {existing.user_id}")
+            print("[INFO] Test user 'test123' already exists!")
             print(f"   Email: {existing.email}")
             print(f"   Premium: {existing.is_premium}")
+            # Ensure Elo is set
+            if not existing.elo_rating:
+                existing.elo_rating = 1200
+                db.commit()
+                print("   [INFO] Reset Elo to 1200")
             return
         
         # Create test user
@@ -34,29 +38,26 @@ def create_test_user():
             username="TestUser",
             password_hash=pwd_context.hash("password123"),
             is_verified=True,
-            is_premium=True,  # Start as premium
-            premium_since=datetime.utcnow()
+            is_premium=True,
+            premium_since=datetime.utcnow(),
+            elo_rating=1200
         )
         
         db.add(test_user)
         db.commit()
         db.refresh(test_user)
         
-        print("✅ Test user created successfully!")
+        print("[SUCCESS] Test user created successfully!")
         print("\n" + "="*60)
         print("LOGIN CREDENTIALS")
         print("="*60)
         print(f"Email:    test@beatcoders.com")
         print(f"Password: password123")
         print(f"User ID:  {test_user.user_id}")
-        print(f"Premium:  ✓ YES")
         print("="*60)
-        print("\nYou can now:")
-        print("  1. Login at: http://localhost:8001/dashboard.html")
-        print("  2. Test all premium features!")
         
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"[ERROR] Error: {e}")
         db.rollback()
     finally:
         db.close()

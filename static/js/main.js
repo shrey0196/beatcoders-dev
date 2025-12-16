@@ -511,10 +511,15 @@ function initApp() {
   if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
   if (modalOverlay) modalOverlay.addEventListener('click', closeModal);
   if (closeSuccessBtn) closeSuccessBtn.addEventListener('click', () => {
-
-
-    window.location.href = 'dashboard.html';
-
+    // Check if user came from a battle invite
+    const pendingMatchId = sessionStorage.getItem('pendingBattleMatchId');
+    if (pendingMatchId) {
+      sessionStorage.removeItem('pendingBattleMatchId');
+      sessionStorage.removeItem('pendingBattleInviter');
+      window.location.href = `/battle.html?match_id=${pendingMatchId}`;
+    } else {
+      window.location.href = 'dashboard.html';
+    }
   });
 
   if (showCreateAccountBtn) showCreateAccountBtn.addEventListener('click', () => showModalView(createAccountView));
@@ -660,6 +665,7 @@ function initApp() {
             const newUsernameEl = document.getElementById('new-username');
             if (newUsernameEl) newUsernameEl.textContent = userID;
 
+            // Always show verification modal (battle redirect happens after verification)
             // Store email for verification
             localStorage.setItem('pendingVerificationEmail', data.email);
             showModalView(verifyEmailView);
@@ -709,7 +715,16 @@ function initApp() {
           localStorage.setItem('beatCodersUserID', data.user_id);
           localStorage.setItem('beatCodersEmail', data.email);
           localStorage.setItem('beatCodersUsername', data.username);
-          window.location.href = 'dashboard.html';
+
+          // Check if user came from a battle invite
+          const pendingMatchId = sessionStorage.getItem('pendingBattleMatchId');
+          if (pendingMatchId) {
+            sessionStorage.removeItem('pendingBattleMatchId');
+            sessionStorage.removeItem('pendingBattleInviter');
+            window.location.href = `/battle.html?match_id=${pendingMatchId}`;
+          } else {
+            window.location.href = 'dashboard.html';
+          }
         } else {
           const errorData = await response.json();
           if (response.status === 404) {

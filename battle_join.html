@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Battle - BeatCoders</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --accent1: #3b82f6;
+            /* Blue */
+            --accent2: #8b5cf6;
+            /* Purple */
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 20%);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            padding: 20px;
+        }
+
+        .card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated border gradient */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent1), var(--accent2), transparent);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--accent1);
+            background: rgba(59, 130, 246, 0.05);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .join-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--accent1), var(--accent2));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        .join-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -10px rgba(59, 130, 246, 0.5);
+        }
+
+        .divider {
+            margin: 24px 0;
+            display: flex;
+            align-items: center;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--glass-border);
+        }
+
+        .divider span {
+            padding: 0 10px;
+        }
+
+        .signup-cta {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px dashed var(--glass-border);
+        }
+
+        .signup-btn {
+            background: transparent;
+            color: white;
+            border: 1px solid var(--glass-border);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: all 0.2s;
+        }
+
+        .signup-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--text-secondary);
+        }
+
+        .avatar-stack {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 3px solid var(--bg-dark);
+            background: var(--accent1);
+            margin-left: -12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .avatar:first-child {
+            margin-left: 0;
+            background: var(--accent2);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="card">
+
+            <div class="avatar-stack">
+                <div class="avatar">VS</div>
+                <div class="avatar">?</div>
+            </div>
+
+            <h1>You've been Challenged!</h1>
+            <p class="subtitle">A friend invited you to a 1v1 Battle on BeatCoders.</p>
+
+            <form id="join-form">
+                <div class="input-group">
+                    <label>Display Name</label>
+                    <input type="text" id="guest-name" placeholder="Enter your name" required>
+                </div>
+                <div class="input-group">
+                    <label>Email (Optional)</label>
+                    <input type="email" id="guest-email" placeholder="For game results">
+                </div>
+                <button type="submit" class="join-btn">Join Battle as Guest</button>
+            </form>
+
+            <div class="divider"><span>OR</span></div>
+
+            <div class="signup-cta">
+                <p style="font-size: 0.9rem; color: #cbd5e1; margin-bottom: 5px;">Want to track your win streak?</p>
+                <p style="font-size: 0.8rem; color: var(--text-secondary);">Create an account to save your progress and
+                    earn Elo rating.</p>
+                <button class="signup-btn" id="signup-redirect-btn">Sign Up / Log In</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Extract match_id from URL if present
+        const urlParams = new URLSearchParams(window.location.search);
+        const matchId = urlParams.get('match_id');
+        const inviterName = urlParams.get('inviter');
+
+        // Update subtitle if inviter name is available
+        if (inviterName) {
+            document.querySelector('.subtitle').textContent = `${inviterName} invited you to a 1v1 Battle on BeatCoders.`;
+        }
+
+        document.getElementById('join-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('guest-name').value;
+
+            // Build battle URL with guest_name and match_id (if present)
+            let battleUrl = `/battle.html?guest_name=${encodeURIComponent(name)}`;
+            if (matchId) {
+                battleUrl += `&match_id=${matchId}`;
+            }
+
+            window.location.href = battleUrl;
+        });
+
+        // Signup button - preserve match_id through signup flow
+        document.getElementById('signup-redirect-btn').addEventListener('click', () => {
+            // Store match_id in sessionStorage so we can redirect back after signup
+            if (matchId) {
+                sessionStorage.setItem('pendingBattleMatchId', matchId);
+                sessionStorage.setItem('pendingBattleInviter', inviterName || '');
+            }
+            window.location.href = '/index.html';
+        });
+    </script>
+
+</body>
+
+</html>

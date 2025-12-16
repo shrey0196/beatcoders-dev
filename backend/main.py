@@ -49,8 +49,25 @@ from models.mentor_conversation import MentorConversation
 from models.submission import Submission
 Base.metadata.create_all(bind=engine)
 
+# --- Schema Migration for Elo (Manual Check) ---
+from sqlalchemy import text, inspect
+def run_migrations():
+    try:
+        inspector = inspect(engine)
+        columns = [c['name'] for c in inspector.get_columns('users')]
+        if 'elo_rating' not in columns:
+            print("Migrating: Adding elo_rating to users table...")
+            with engine.connect() as conn:
+                conn.execute(text("ALTER TABLE users ADD COLUMN elo_rating INTEGER DEFAULT 1200"))
+                conn.commit()
+            print("Migration successful.")
+    except Exception as e:
+        print(f"Migration check failed: {e}")
+
+run_migrations()
+
 # Import and include routers
-from api.routes import auth, cognitive, submissions, visualization, run_code, problems
+from api.routes import auth, cognitive, submissions, visualization, run_code, problems, battle
 from api.routes import crs, skill_roadmap, ai_mentor  # Phase 4 routes
 
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
@@ -64,6 +81,7 @@ app.include_router(problems.router, prefix="/api", tags=["problems"])
 app.include_router(crs.router, prefix="/api", tags=["crs"])
 app.include_router(skill_roadmap.router, prefix="/api", tags=["skill-roadmap"])
 app.include_router(ai_mentor.router, prefix="/api", tags=["ai-mentor"])
+app.include_router(battle.router, tags=["battle"])
 
 @app.get("/api")
 async def root():

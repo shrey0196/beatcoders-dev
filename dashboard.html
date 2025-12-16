@@ -3633,7 +3633,7 @@
       }
 
       // --- Leaderboard Generation ---
-      function generateLeaderboard() {
+      async function generateLeaderboard() {
         const leaderboardPodium = document.getElementById('leaderboard-podium');
         const leaderboardList = document.getElementById('leaderboard-list');
         if (!leaderboardPodium || !leaderboardList) return;
@@ -3641,25 +3641,28 @@
         const currentUserID = userSettings.userID;
         const currentUserDisplayName = userSettings.name;
 
-        let leaderboardData = [
-          { id: 'AlexCode', name: 'AlexCode', score: 15204 }, { id: 'BitMaster', name: 'BitMaster', score: 14889 },
-          { id: 'SyntaxSavvy', name: 'SyntaxSavvy', score: 14512 }, { id: 'Glitch', name: 'Glitch', score: 13980 },
-          { id: 'Recursiva', name: 'Recursiva', score: 13555 }, { id: 'NullPointer', name: 'NullPointer', score: 13210 },
-          { id: 'ByteBard', name: 'ByteBard', score: 12876 }, { id: 'CodeSlinger', name: 'CodeSlinger', score: 11998 },
-          { id: 'KernelKid', name: 'KernelKid', score: 11500 }, { id: 'HexaDecimal', name: 'HexaDecimal', score: 11234 },
-          { id: 'ScriptKitten', name: 'ScriptKitten', score: 10890 }, { id: 'DataDaemon', name: 'DataDaemon', score: 10543 },
-          { id: 'LogicLane', name: 'LogicLane', score: 10211 }, { id: 'AlgoQueen', name: 'AlgoQueen', score: 9987 },
-        ];
-
-        const userInList = leaderboardData.some(u => u.id === currentUserID);
-        if (!userInList) {
-          leaderboardData.push({ id: currentUserID, name: currentUserDisplayName, score: 12345 });
-        } else {
-          const userToUpdate = leaderboardData.find(u => u.id === currentUserID);
-          if (userToUpdate) userToUpdate.name = currentUserDisplayName;
+        // Fetch from API
+        let leaderboardData = [];
+        try {
+          const res = await fetch('/api/battle/leaderboard');
+          const data = await res.json();
+          leaderboardData = data.leaderboard.map(u => ({
+            id: u.username, // Username acts as ID for now
+            name: u.username,
+            score: u.rating
+          }));
+        } catch (e) {
+          console.error("Leaderboard fetch failed", e);
+          // Fallback to empty or placeholder if needed, but better to show nothing/error
+          return;
         }
 
-        leaderboardData.sort((a, b) => b.score - a.score).forEach((user, index) => user.rank = index + 1);
+        // Add current user if not in list (fetching only top 10 so likely not in list if rank > 10)
+        // Actually, for global leaderboard, we just show top 10.
+        // If we want to show "You" at rank 100, we'd need a separate API call for "My Rank".
+        // For MVP, just show top 10.
+
+        leaderboardData.forEach((user, index) => user.rank = index + 1);
         const currentUserRank = leaderboardData.find(u => u.id === currentUserID)?.rank;
 
         leaderboardPodium.innerHTML = '';
@@ -3685,7 +3688,7 @@
                 ${isCurrentUser ? '<span class="user-badge">You</span>' : ''}
                 ${medalIcons[podiumClass]}
                 <div class="podium-name">${user.name}</div>
-                <div class="podium-score">${user.score.toLocaleString()} pts</div>
+                <div class="podium-score">${user.score.toLocaleString()} RP</div>
             `;
           leaderboardPodium.appendChild(item);
         });
@@ -3703,7 +3706,7 @@
                     <div class="name">${user.name}</div>
                     ${isCurrentUser ? '<span class="user-badge">You</span>' : ''}
                 </div>
-                <div class="score">${user.score.toLocaleString()} pts</div>
+                <div class="score">${user.score.toLocaleString()} RP</div>
             `;
           leaderboardList.appendChild(item);
         });
@@ -4124,10 +4127,204 @@
         settingsViewInitialized = true;
       }
 
-      function showToast() {
+      function showToast(message = "Changes saved successfully!") {
         const toast = document.getElementById('toast-notification');
+        if (!toast) return;
+        toast.textContent = message;
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 3000);
+      }
+
+      // --- Contests View Logic ---
+      // --- Contests View Logic ---
+      function initContestsView() {
+        const inviteBtn = document.getElementById('invite-friend-btn');
+        const emailInput = document.getElementById('invite-email-input');
+        const onlineList = document.getElementById('online-users-list');
+
+        if (inviteBtn) {
+          inviteBtn.addEventListener('click', () => {
+            const email = emailInput.value.trim();
+            if (!email) {
+              showToast("Please enter an email address.");
+              return;
+            }
+
+            // Generate unique match ID
+            const matchId = 'match_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+
+            // Generate Guest Link - use battle_join.html for onboarding, pass match_id
+            const inviterName = userSettings.name || userSettings.userID;
+            const link = `${window.location.origin}/battle_join.html?match_id=${matchId}&inviter=${encodeURIComponent(inviterName)}`;
+
+            // Copy to Clipboard
+            navigator.clipboard.writeText(link).then(() => {
+              showToast(`Invite Link copied! Redirecting to battle...`);
+              emailInput.value = '';
+
+              // Redirect inviter to battle screen as host
+              setTimeout(() => {
+                window.location.href = `/battle.html?match_id=${matchId}&is_host=true`;
+              }, 1000);
+            }).catch(err => {
+              console.error('Failed to copy text: ', err);
+              showToast(`Invite sent to ${email}!`);
+              emailInput.value = '';
+
+              // Still redirect even if clipboard fails
+              setTimeout(() => {
+                window.location.href = `/battle.html?match_id=${matchId}&is_host=true`;
+              }, 1000);
+            });
+          });
+        }
+
+        // Lobby WebSocket
+        let lobbyWs = null;
+        function connectLobby() {
+          const userId = userSettings.name || userSettings.userID;
+          const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+          // Use port 8001 specifically as backend is on 8001, but relative path might fail if serving from 5500 via live server
+          // We'll use absolute URL to backend for safety here or relative if same origin
+          const wsUrl = `ws://localhost:8001/ws/lobby/${userId}`;
+
+          lobbyWs = new WebSocket(wsUrl);
+
+          lobbyWs.onopen = () => {
+            console.log("[Lobby] Connected as", userId);
+          };
+
+          lobbyWs.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.type === 'CHALLENGE_RECEIVED') {
+              showChallengeModal(data.from_id);
+            } else if (data.type === 'MATCH_START') {
+              // window.location.href = `/battle.html?match_id=${data.match_id}`;
+              showMatchReadyModal(data.match_id);
+            }
+          };
+
+          lobbyWs.onclose = () => {
+            setTimeout(connectLobby, 5000); // Reconnect
+          };
+        }
+
+        function sendChallenge(targetId) {
+          if (lobbyWs && lobbyWs.readyState === WebSocket.OPEN) {
+            lobbyWs.send(JSON.stringify({
+              type: 'SEND_CHALLENGE',
+              target_id: targetId
+            }));
+            showToast(`Challenge sent to ${targetId}...`);
+          } else {
+            showToast("Lobby connection lost. Reconnecting...");
+            connectLobby();
+          }
+        }
+
+        // Match Ready Modal
+        function showMatchReadyModal(matchId) {
+          const overlay = document.createElement('div');
+          overlay.className = 'modal-overlay';
+          overlay.style.display = 'flex'; // Force show
+
+          overlay.innerHTML = `
+                <div class="modal-container" style="text-align: center; padding: 40px; border: 1px solid var(--accent1); box-shadow: 0 0 20px rgba(78, 168, 255, 0.2);">
+                    <div style="font-size: 3rem; margin-bottom: 20px;">⚔️</div>
+                    <h2 style="margin-bottom: 10px; color: var(--text-primary);">Match Ready!</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 30px;">Your opponent is ready. Enter the arena?</p>
+                    
+                    <button id="manual-join-btn" class="solve-btn" style="width: 100%; font-size: 1.2rem; padding: 15px;">
+                        ENTER BATTLE
+                    </button>
+                    <div style="margin-top: 15px; font-size: 0.9rem; color: var(--text-secondary); cursor: pointer; text-decoration: underline;" onclick="this.closest('.modal-overlay').remove()">Cancel</div>
+                </div>
+            `;
+
+          document.body.appendChild(overlay);
+
+          document.getElementById('manual-join-btn').onclick = () => {
+            window.location.href = `/battle.html?match_id=${matchId}`;
+          };
+        }
+
+        // Modal Logic
+        const challengeModal = document.getElementById('challenge-modal');
+        let currentChallengerId = null;
+        function showChallengeModal(challengerId) {
+          if (challengeModal) {
+            currentChallengerId = challengerId;
+            document.getElementById('challenger-name').textContent = challengerId;
+            challengeModal.classList.add('active');
+          }
+        }
+
+        if (document.getElementById('accept-challenge-btn')) {
+          document.getElementById('accept-challenge-btn').addEventListener('click', () => {
+            if (lobbyWs && currentChallengerId) {
+              lobbyWs.send(JSON.stringify({
+                type: 'ACCEPT_CHALLENGE',
+                challenger_id: currentChallengerId
+              }));
+              challengeModal.classList.remove('active');
+            }
+          });
+          document.getElementById('decline-challenge-btn').addEventListener('click', () => {
+            challengeModal.classList.remove('active');
+          });
+        }
+
+        connectLobby();
+
+        // Active Users Logic
+        async function fetchActiveUsers() {
+          // ... (Fetch logic needs to call sendChallenge on click)
+          // We need to overwrite the innerHTML logic to use onclick="window.sendChallengeGlobal(...)"
+        }
+
+        window.sendChallengeGlobal = sendChallenge; // Expose for HTML string
+
+        async function fetchActiveUsersInternal() { // Renamed to avoid scoping conflict if any
+          if (!onlineList) return;
+          try {
+            const res = await fetch('/api/battle/active_users');
+            const data = await res.json();
+            const users = data.users || [];
+            const currentUserId = userSettings.name || userSettings.userID;
+
+            onlineList.innerHTML = users.length === 0
+              ? '<div style="text-align:center; color:var(--text-secondary); padding:20px;">No users online. Be the first!</div>'
+              : users.filter(u => u.user_id !== currentUserId).map(u => `
+                        <div class="online-user-item" style="display: flex; align-items: center; justify-content: space-between; padding: 12px; background: var(--bg2); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                          <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--accent1), var(--accent2)); display: flex; align-items: center; justify-content: center; font-weight: 700; color: white;">
+                              ${u.user_id.substring(0, 2).toUpperCase()}
+                            </div>
+                            <div>
+                              <div style="color: var(--text-primary); font-weight: 600;">${u.user_id}</div>
+                              <div style="color: var(--text-secondary); font-size: 0.8rem;">Status: <span style="color:${u.status === 'battling' ? '#ef4444' : '#22c55e'}">${u.status}</span> • Rating: ${u.rating}</div>
+                            </div>
+                          </div>
+                          ${u.status === 'battling' ?
+                  `<button onclick="window.location.href='/battle.html'" style="padding: 8px 16px; background: #ef4444; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: not-allowed; opacity: 0.7;">Battling</button>` :
+                  `<button onclick="window.sendChallengeGlobal('${u.user_id}')" style="padding: 8px 16px; background: linear-gradient(135deg, var(--accent1), var(--accent2)); color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;">Challenge</button>`
+                }
+                        </div>
+                    `).join('');
+
+            // Update counts (Simplified)
+            const count = users.length;
+            const bottomMsg = onlineList.nextElementSibling.querySelector('span');
+            if (bottomMsg) bottomMsg.textContent = `${count} users online`;
+
+          } catch (e) {
+            console.error("Failed to fetch active users", e);
+          }
+        }
+
+        fetchActiveUsersInternal();
+        setInterval(fetchActiveUsersInternal, 5000);
+
       }
 
       function runDashboardAnimations() {
@@ -4148,11 +4345,35 @@
         if (waveCanvas) resizeCanvas();
         animationLoop();
         runDashboardAnimations();
+        initContestsView();
+        generateLeaderboard();
       }
 
       initializeDashboard();
     });
   </script>
+
+
+  <!-- Challenge Invite Modal -->
+  <div id="challenge-modal" class="modal-overlay">
+    <div class="modal-container" style="max-width: 400px; text-align: center;">
+      <div class="modal-header" style="justify-content: center;">
+        <h2>⚔️ Challenge Received!</h2>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 1.1rem; margin-bottom: 20px;">
+          <strong style="color: var(--accent1);" id="challenger-name">Player</strong> wants to battle you!
+        </p>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+          <button id="decline-challenge-btn"
+            style="padding: 10px 20px; background: var(--bg2); border: 1px solid var(--border-color); color: var(--text-secondary); border-radius: 8px; cursor: pointer;">Decline</button>
+          <button id="accept-challenge-btn"
+            style="padding: 10px 20px; background: linear-gradient(135deg, var(--green), var(--accent2)); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer;">Accept
+            Battle</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Code Editor Modal -->
   <div id="code-editor-modal" class="modal-overlay">

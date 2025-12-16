@@ -19,3 +19,6 @@ class User(Base):
     is_premium = Column(Boolean, default=False)
     premium_since = Column(DateTime(timezone=True), nullable=True)
     premium_expires = Column(DateTime(timezone=True), nullable=True)
+
+    # Gamification
+    elo_rating = Column(Integer, default=1200)

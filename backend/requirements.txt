@@ -5,3 +5,4 @@ bcrypt
 email-validator
 python-dotenv
 sendgrid
+websockets

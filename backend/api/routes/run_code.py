@@ -83,21 +83,40 @@ def execute_python_code(code: str, test_case: Dict) -> tuple:
         sys.stdout = io.StringIO()
         
         try:
-            # Execute the user's code to define the function
+            # Execute the user's code to define the function/class
             exec(code, namespace)
             
-            # Find the function name (assume it's the first function defined)
-            func_name = None
-            for name, obj in namespace.items():
-                if callable(obj) and not name.startswith('__'):
-                    func_name = name
-                    break
-            
-            if not func_name:
-                return False, None, "No function found in code"
-            
-            # Get the function
-            user_function = namespace[func_name]
+            # Check for Solution class (LeetCode style)
+            if 'Solution' in namespace and isinstance(namespace['Solution'], type):
+                solution_cls = namespace['Solution']
+                solution_instance = solution_cls()
+                
+                # Find the method to call (first non-underscore method)
+                method_name = None
+                for name in dir(solution_instance):
+                    if not name.startswith('__'):
+                        attr = getattr(solution_instance, name)
+                        if callable(attr):
+                            method_name = name
+                            break
+                            
+                if not method_name:
+                    return False, None, "No method found in Solution class"
+                    
+                user_function = getattr(solution_instance, method_name)
+                
+            else:
+                # Fallback: Find the first standalone function
+                func_name = None
+                for name, obj in namespace.items():
+                    if callable(obj) and not name.startswith('__'):
+                        func_name = name
+                        break
+                
+                if not func_name:
+                    return False, None, "No function found in code"
+                
+                user_function = namespace[func_name]
             
             # Call the function with test inputs
             input_data = test_case['input']
