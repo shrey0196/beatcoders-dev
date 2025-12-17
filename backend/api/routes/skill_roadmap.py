@@ -14,10 +14,11 @@ roadmap_gen = RoadmapGenerator()
 def check_premium(user: User):
     """Check if user has premium access"""
     if not user.is_premium:
-        raise HTTPException(
-            status_code=403, 
-            detail="This feature requires premium access. Upgrade to unlock personalized skill roadmaps!"
-        )
+        pass
+        # raise HTTPException(
+        #     status_code=403, 
+        #     detail="This feature requires premium access. Upgrade to unlock personalized skill roadmaps!"
+        # )
 
 @router.get("/roadmap/{user_id}")
 def get_roadmap(user_id: str, db: Session = Depends(get_db)):

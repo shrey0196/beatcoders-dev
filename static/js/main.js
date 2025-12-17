@@ -726,6 +726,8 @@ function initApp() {
           localStorage.setItem('beatCodersUserID', data.user_id);
           localStorage.setItem('beatCodersEmail', data.email);
           localStorage.setItem('beatCodersUsername', data.username);
+          // Store full user object for premium checks (AdaptiveIDE)
+          localStorage.setItem('beatCodersUser', JSON.stringify(data));
 
           // Check if user came from a battle invite
           const pendingMatchId = sessionStorage.getItem('pendingBattleMatchId');

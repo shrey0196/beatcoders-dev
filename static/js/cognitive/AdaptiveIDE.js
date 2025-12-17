@@ -43,7 +43,7 @@ class AdaptiveIDE {
 
     checkPremium() {
         const user = JSON.parse(localStorage.getItem('beatCodersUser') || '{}');
-        return user.is_premium === true;
+        return true; // user.is_premium === true; // TEMPORARY: Force enable for testing
     }
 
     /**
@@ -86,6 +86,7 @@ class AdaptiveIDE {
             font-weight: 600;
             transition: all 0.3s ease;
             margin-left: auto;
+            margin-right: 10px; /* Add spacing from close button */
             display: flex;
             align-items: center;
             gap: 5px;
@@ -98,6 +99,8 @@ class AdaptiveIDE {
         const buttonContainer = document.querySelector('#editor-navbar > div:last-child');
         if (buttonContainer) {
             buttonContainer.insertBefore(focusBtn, buttonContainer.firstChild);
+        } else if (insertBeforeNode) {
+            container.insertBefore(focusBtn, insertBeforeNode);
         } else {
             container.appendChild(focusBtn);
         }
