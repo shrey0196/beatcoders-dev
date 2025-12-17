@@ -43,14 +43,21 @@ def get_crs(user_id: str, db: Session = Depends(get_db)):
         db.commit()
         db.refresh(crs_record)
     
+    # Get tier with minimum requirements
+    tier = crs_calculator._get_tier(
+        crs_record.score, 
+        crs_record.total_problems_solved,
+        crs_record.days_active if hasattr(crs_record, 'days_active') else 0
+    )
+    
     return {
         "score": crs_record.score,
         "components": crs_record.components,
-        "tier": crs_calculator._get_tier(crs_record.score),
+        "tier": tier,
         "insights": crs_calculator._generate_insights(
             crs_record.components, 
             crs_record.score, 
-            crs_calculator._get_tier(crs_record.score)
+            tier
         ),
         "total_problems_solved": crs_record.total_problems_solved,
         "last_updated": crs_record.last_updated.isoformat() if crs_record.last_updated else None
@@ -192,7 +199,11 @@ def get_crs_insights(user_id: str, db: Session = Depends(get_db)):
             "recommendations": ["Try some easy problems to get started"]
         }
     
-    tier = crs_calculator._get_tier(crs_record.score)
+    tier = crs_calculator._get_tier(
+        crs_record.score,
+        crs_record.total_problems_solved,
+        crs_record.days_active if hasattr(crs_record, 'days_active') else 0
+    )
     insights = crs_calculator._generate_insights(crs_record.components, crs_record.score, tier)
     
     # Add recommendations based on weak areas

@@ -54,11 +54,35 @@ from sqlalchemy import text, inspect
 def run_migrations():
     try:
         inspector = inspect(engine)
+        
+        # Migration 1: Add elo_rating to users table
         columns = [c['name'] for c in inspector.get_columns('users')]
         if 'elo_rating' not in columns:
             print("Migrating: Adding elo_rating to users table...")
             with engine.connect() as conn:
                 conn.execute(text("ALTER TABLE users ADD COLUMN elo_rating INTEGER DEFAULT 1200"))
+                conn.commit()
+            print("Migration successful.")
+        
+        # Migration 2: Add days_active to crs_scores table
+        if 'crs_scores' in inspector.get_table_names():
+            crs_columns = [c['name'] for c in inspector.get_columns('crs_scores')]
+            if 'days_active' not in crs_columns:
+                print("Migrating: Adding days_active to crs_scores table...")
+                with engine.connect() as conn:
+                    conn.execute(text("ALTER TABLE crs_scores ADD COLUMN days_active INTEGER DEFAULT 0"))
+                    conn.commit()
+                print("Migration successful.")
+        
+        # Migration 3: Add career fields to users table
+        columns = [c['name'] for c in inspector.get_columns('users')]
+        if 'is_public_profile' not in columns:
+            print("Migrating: Adding career fields to users table...")
+            with engine.connect() as conn:
+                # SQLite doesn't support multiple columns in one ALTER typically, or we do one by one for safety
+                conn.execute(text("ALTER TABLE users ADD COLUMN is_public_profile BOOLEAN DEFAULT 0"))
+                conn.execute(text("ALTER TABLE users ADD COLUMN open_to_work BOOLEAN DEFAULT 0"))
+                conn.execute(text("ALTER TABLE users ADD COLUMN profile_views INTEGER DEFAULT 0"))
                 conn.commit()
             print("Migration successful.")
     except Exception as e:
@@ -68,7 +92,7 @@ run_migrations()
 
 # Import and include routers
 from api.routes import auth, cognitive, submissions, visualization, run_code, problems, battle
-from api.routes import crs, skill_roadmap, ai_mentor  # Phase 4 routes
+from api.routes import crs, skill_roadmap, ai_mentor, career, micro_lessons  # Phase 4 & 14 & 16 routes
 
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 app.include_router(cognitive.router, prefix="/api/cognitive", tags=["cognitive"])
@@ -82,6 +106,8 @@ app.include_router(crs.router, prefix="/api", tags=["crs"])
 app.include_router(skill_roadmap.router, prefix="/api", tags=["skill-roadmap"])
 app.include_router(ai_mentor.router, prefix="/api", tags=["ai-mentor"])
 app.include_router(battle.router, tags=["battle"])
+app.include_router(career.router, prefix="/api", tags=["career"])
+app.include_router(micro_lessons.router, prefix="/api", tags=["micro-lessons"])
 
 @app.get("/api")
 async def root():

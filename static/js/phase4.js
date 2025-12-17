@@ -15,59 +15,128 @@ const CRSModule = {
    */
   async init(userId) {
     if (!userId) return;
+    this.userId = userId;
 
-    await this.fetchCRS(userId);
+    await this.fetchCRSData();
     this.renderCRSBadge();
-    // this.renderCRSDashboardCard(); // Removed from main view
   },
 
   /**
    * Fetch CRS data from API
    */
-  async fetchCRS(userId) {
+  async fetchCRSData() {
     try {
-      const response = await fetch(`http://localhost:8001/api/crs/${userId}`);
-      if (response.ok) {
-        this.currentCRS = await response.json();
-        return this.currentCRS;
+      console.log(`[CRS] Fetching data for user: ${this.userId}`);
+      const response = await fetch(`/api/crs/${this.userId}`);
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
       }
+      this.currentCRS = await response.json();
+      console.log('[CRS] Data loaded:', this.currentCRS);
+
+      // VISUAL DEBUG: Success toast
+      /*
+      const toast = document.createElement('div');
+      toast.textContent = `CRS Loaded: ${this.currentCRS.score}`;
+      toast.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#22c55e;color:white;padding:12px;border-radius:8px;z-index:9999;';
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+      */
+
     } catch (error) {
-      console.error('Error fetching CRS:', error);
+      console.error('[CRS] Error loading CRS data:', error);
     }
-    return null;
   },
 
   /**
-   * Render CRS badge in profile dropdown
+   * Render CRS badge in User Dropdown
    */
   renderCRSBadge() {
-    if (!this.currentCRS) return;
+    console.log('[CRS] Attempting to render badge in dropdown...');
+    if (!this.currentCRS) {
+      console.error('[CRS] No CRS data available');
+      return;
+    }
 
+    // Try to find dropdown menu
     const dropdownMenu = document.getElementById('dropdown-menu');
-    if (!dropdownMenu) return;
+    // Also try class query if ID fails (just in case)
+    const targetMenu = dropdownMenu || document.querySelector('.dropdown-menu');
 
-    // Remove existing if any
-    const existingBtn = document.getElementById('crs-dropdown-item');
-    if (existingBtn) existingBtn.remove();
+    if (!targetMenu) {
+      console.warn('[CRS] Dropdown menu not found, retrying in 500ms...');
+      setTimeout(() => this.renderCRSBadge(), 500);
+      return;
+    }
 
-    // Create dropdown item
-    const crsBtn = document.createElement('button');
-    crsBtn.className = 'dropdown-item';
-    crsBtn.id = 'crs-dropdown-item';
-    crsBtn.onclick = () => this.showCRSModal();
+    // Remove existing CRS badge if any
+    const existingBadge = document.getElementById('crs-badge-item');
+    if (existingBadge) existingBadge.remove();
 
-    crsBtn.innerHTML = `
-      <span class="crs-tier-icon">${this.getTierIcon(this.currentCRS.tier)}</span>
-      <span>CRS Score: ${Math.round(this.currentCRS.score)}</span>
+    console.log('[CRS] Creating new dropdown item');
+
+    // Create CRS badge button (styled as dropdown item)
+    const crsItem = document.createElement('button');
+    crsItem.id = 'crs-badge-item';
+    crsItem.className = 'dropdown-item';
+    crsItem.onclick = (e) => {
+      e.preventDefault();
+      e.stopPropagation(); // Keep dropdown open or handle properly
+      this.showCRSModal();
+    };
+
+    // Custom style to stand out slightly but match theme
+    crsItem.style.cssText = `
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: none;
+      color: var(--text-primary);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 10px 16px; 
     `;
 
-    // Insert after Profile button (index 0 is profile usually)
-    const profileBtn = document.getElementById('profile-btn');
-    if (profileBtn && profileBtn.nextSibling) {
-      dropdownMenu.insertBefore(crsBtn, profileBtn.nextSibling);
+    // Inner HTML with Icon
+    crsItem.innerHTML = `
+      <div style="
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        width: 20px; 
+        height: 20px;
+        font-size: 18px;
+      ">
+        ${this.getTierIcon(this.currentCRS.tier)}
+      </div>
+      <div style="display: flex; flex-direction: column; line-height: 1.2;">
+        <span style="font-weight: 600;">CRS Score: ${Math.round(this.currentCRS.score)}</span>
+        <span style="font-size: 11px; opacity: 0.7; text-transform: capitalize;">${this.currentCRS.tier} Tier</span>
+      </div>
+    `;
+
+    // Insert at the top of the dropdown (before Profile)
+    if (targetMenu.firstChild) {
+      targetMenu.insertBefore(crsItem, targetMenu.firstChild);
     } else {
-      dropdownMenu.insertBefore(crsBtn, dropdownMenu.firstChild);
+      targetMenu.appendChild(crsItem);
     }
+
+    // Add separator after it
+    const separator = document.createElement('div');
+    separator.className = 'dropdown-divider';
+    separator.id = 'crs-divider';
+
+    // Check if we need to remove old separator
+    const oldSep = document.getElementById('crs-divider');
+    if (oldSep) oldSep.remove();
+
+    targetMenu.insertBefore(separator, crsItem.nextSibling);
+
+    console.log('[CRS] Badge rendered in dropdown');
   },
 
   /**
@@ -267,10 +336,12 @@ const CRSModule = {
    */
   getTierIcon(tier) {
     const icons = {
+      beginner: '⭐',
       bronze: '🥉',
       silver: '🥈',
       gold: '🥇',
-      platinum: '💎'
+      platinum: '💎',
+      diamond: '💠'
     };
     return icons[tier] || '⭐';
   },
@@ -655,8 +726,10 @@ async function initPhase4Features() {
   const userId = localStorage.getItem('beatCodersUserID') || sessionStorage.getItem('userId') || localStorage.getItem('userId');
   const isPremium = true; // For testing, assume premium if key missing. In prod, check API or token.
 
+  console.log('[CRS] Checking user ID:', userId);
+
   if (!userId) {
-    console.log('No user logged in, skipping Phase 4 features');
+    console.error('[CRS] No user logged in (beatCodersUserID missing), skipping Phase 4 features');
     return;
   }
 

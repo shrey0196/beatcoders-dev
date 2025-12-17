@@ -5,9 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6c39dabe-5f2e-49dc-b066-1a9e42abd9f5" name="Changes" comment="added filter button and checkbox">
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/created_database_to_store_submission_details/shelved.patch" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/created_database_to_store_submission_details.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/analyzers/crs_calculator.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/analyzers/crs_calculator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/routes/cognitive.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/routes/cognitive.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/routes/crs.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/routes/crs.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/models/crs.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/models/crs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/models/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/models/user.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/dashboard.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/cognitive/AdaptiveIDE.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/cognitive/AdaptiveIDE.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/phase4.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/phase4.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

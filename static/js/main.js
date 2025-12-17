@@ -19,6 +19,14 @@ function initApp() {
   // Use global problem set from problems_db.js
   const problems = window.FULL_PROBLEM_SET || [];
 
+  // Initialize MicroLessonManager (Phase 16) - GLOBAL SCOPE
+  if (!window.microLessonManager && window.MicroLessonManager) {
+    window.microLessonManager = new window.MicroLessonManager();
+    window.microLessonManager.init();
+    console.log('[Main] MicroLessonManager initialized');
+  }
+
+
   const problemsDataMap = problems.reduce((acc, curr) => {
     acc[curr.title] = curr;
     return acc;
@@ -290,6 +298,9 @@ function initApp() {
       window.adaptiveIDE = new AdaptiveIDE();
     }
     window.adaptiveIDE.init();
+
+    // No need to adjust Run button - it stays on the left
+
 
     // Initialize Monaco Editor
     const template = problem.template || "# Write your code here\n";

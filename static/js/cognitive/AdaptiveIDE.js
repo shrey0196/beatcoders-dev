@@ -31,33 +31,53 @@ class AdaptiveIDE {
      */
     init() {
         console.log('[AdaptiveIDE] Initializing...');
+        if (!this.checkPremium()) {
+            console.log('[AdaptiveIDE] Premium not active. Adaptive features disabled.');
+            return;
+        }
         this.isActive = true;
         this.createFocusModeButton();
         this.createEncouragementContainer();
         console.log('[AdaptiveIDE] Ready');
     }
 
+    checkPremium() {
+        const user = JSON.parse(localStorage.getItem('beatCodersUser') || '{}');
+        return user.is_premium === true;
+    }
+
     /**
      * Create Focus Mode toggle button in the editor navbar
      */
     createFocusModeButton() {
-        // Target the new editor navbar
-        const editorNavbar = document.getElementById('editor-navbar');
-        if (!editorNavbar) return;
+        // Try to find the editor navbar or modal header
+        let container = document.getElementById('editor-navbar');
+        let insertBeforeNode = null;
+
+        // Fallback: Target the Code Editor Modal Header
+        if (!container) {
+            const modal = document.getElementById('code-editor-modal');
+            if (modal) {
+                container = modal.querySelector('.modal-header');
+                // Insert before the close button
+                insertBeforeNode = container ? container.querySelector('.modal-close-btn') : null;
+            }
+        }
+
+        if (!container) {
+            console.log('[AdaptiveIDE] Could not find editor container to attach Focus Button');
+            return;
+        }
 
         // Check if button already exists
         if (document.getElementById('focus-mode-toggle')) return;
-
-        // Find the container with buttons (usually the second div in navbar)
-        const buttonContainer = editorNavbar.children[1];
-        if (!buttonContainer) return;
 
         const focusBtn = document.createElement('button');
         focusBtn.id = 'focus-mode-toggle';
         focusBtn.className = 'focus-mode-btn';
         focusBtn.innerHTML = '🎯 Focus Mode';
         focusBtn.style.cssText = `
-            padding: 8px 16px;
+            padding: 6px 14px;
             background: rgba(168, 85, 247, 0.2);
             color: #a855f7;
             border: 1px solid rgba(168, 85, 247, 0.4);
@@ -65,20 +85,21 @@ class AdaptiveIDE {
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s ease;
-            margin-right: 10px;
+            margin-left: auto;
             display: flex;
             align-items: center;
             gap: 5px;
+            font-size: 0.9rem;
         `;
 
         focusBtn.addEventListener('click', () => this.toggleFocusMode());
 
-        // Insert before the Run button
-        const runBtn = document.getElementById('run-code-btn');
-        if (runBtn) {
-            buttonContainer.insertBefore(focusBtn, runBtn);
+        // Insert into the button container (right side of navbar)
+        const buttonContainer = document.querySelector('#editor-navbar > div:last-child');
+        if (buttonContainer) {
+            buttonContainer.insertBefore(focusBtn, buttonContainer.firstChild);
         } else {
-            buttonContainer.appendChild(focusBtn);
+            container.appendChild(focusBtn);
         }
     }
 
@@ -170,7 +191,7 @@ class AdaptiveIDE {
     activateFocusMode() {
         console.log('[AdaptiveIDE] Activating Focus Mode');
         document.body.classList.add('focus-mode-active');
-        
+
         // Force layout update for Monaco editor
         if (window.editorInstance) {
             setTimeout(() => window.editorInstance.layout(), 100);
@@ -185,12 +206,12 @@ class AdaptiveIDE {
     deactivateFocusMode() {
         console.log('[AdaptiveIDE] Deactivating Focus Mode');
         document.body.classList.remove('focus-mode-active');
-        
+
         // Force layout update for Monaco editor
         if (window.editorInstance) {
             setTimeout(() => window.editorInstance.layout(), 100);
         }
-        
+
         this.showNotification('✨ Focus Mode Deactivated', 'Welcome back!');
     }
 
@@ -207,11 +228,11 @@ class AdaptiveIDE {
         // Auto-activate Focus Mode if struggling (High Frustration or Anger)
         const frustrationLevel = states.frustration || 0;
         const angerLevel = states.anger || 0;
-        
+
         // Check cooldown to prevent rapid re-triggering
         const now = Date.now();
         const timeSinceLastTrigger = now - this.lastAutoTriggerTime;
-        
+
         if (!this.focusModeEnabled && timeSinceLastTrigger > this.autoTriggerCooldown) {
             // STRICT: Require BOTH high frustration AND high anger
             if (frustrationLevel > this.thresholds.frustration && angerLevel > 0.7) {
@@ -276,7 +297,7 @@ class AdaptiveIDE {
         if (container) {
             container.innerHTML = `<strong>${title}</strong><br>${message}`;
             container.style.display = 'block';
-            
+
             setTimeout(() => {
                 container.style.animation = 'slideOutRight 0.5s ease';
                 setTimeout(() => {

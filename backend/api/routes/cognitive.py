@@ -197,6 +197,18 @@ def get_user_fingerprint(user_id: int, db: Session = Depends(get_db)):
     Get cognitive fingerprint for a user based on all their sessions.
     """
     # Get all sessions for this user
+    user = db.query(User).filter(User.id == user_id).first()
+    
+    if not user:
+         raise HTTPException(status_code=404, detail="User not found")
+
+    if not user.is_premium:
+        return {
+            "user_id": user_id,
+            "error": "Premium Required",
+            "message": "Detailed cognitive fingerprinting is a Premium feature."
+        }
+        
     user_sessions = db.query(CognitiveHistory).filter(
         CognitiveHistory.user_id == user_id
     ).all()

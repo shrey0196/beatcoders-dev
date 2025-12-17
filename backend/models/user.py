@@ -22,3 +22,8 @@ class User(Base):
 
     # Gamification
     elo_rating = Column(Integer, default=1200)
+
+    # Phase 14: Career
+    is_public_profile = Column(Boolean, default=False)
+    open_to_work = Column(Boolean, default=False)
+    profile_views = Column(Integer, default=0)

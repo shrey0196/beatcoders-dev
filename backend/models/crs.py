@@ -23,5 +23,6 @@ class CRSScore(Base):
     
     # Metadata
     total_problems_solved = Column(Integer, default=0)
+    days_active = Column(Integer, default=0)  # Number of unique days with activity
     last_updated = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     created_at = Column(DateTime(timezone=True), server_default=func.now())

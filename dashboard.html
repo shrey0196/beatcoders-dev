@@ -149,6 +149,122 @@
       cursor: pointer;
     }
 
+    /* Career Card Style (CSS Injection via JS usually, but adding helper CSS here for the new section) */
+    .career-dashboard .card {
+      margin-bottom: 20px;
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    .career-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .setting-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .setting-info {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .setting-label {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .setting-desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .badge-premium {
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      color: #000;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      margin-left: 8px;
+    }
+
+    .cert-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .cert-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 10px;
+      border-radius: 6px;
+    }
+
+    .cert-item.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 20px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #333;
+      transition: .4s;
+      border-radius: 20px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 14px;
+      width: 14px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked+.slider {
+      background-color: var(--accent1);
+    }
+
+    input:checked+.slider:before {
+      transform: translateX(20px);
+    }
+
     .nav-item:hover {
       background-color: var(--glass);
       color: var(--text-strong);
@@ -2534,6 +2650,15 @@
             </svg>
             <span>Leaderboard</span>
           </a>
+          <a class="nav-item" data-view="career-view" id="nav-career-link">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+            </svg>
+            <span>Career Hub</span>
+            <span class="badge-premium" style="margin-left: auto; font-size: 0.6rem; padding: 2px 4px;">PRO</span>
+          </a>
 
           <div class="mobile-nav-divider"></div>
 
@@ -2626,6 +2751,87 @@
                 <div class="bar"></div>
                 <div class="bar"></div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="career-view" class="hidden">
+        <div class="career-dashboard">
+          <div class="card">
+            <h3>Career Profile & Settings</h3>
+            <div class="setting-item">
+              <div class="setting-info">
+                <span class="setting-label">Public Developer Profile</span>
+                <span class="setting-desc">Allow recruiters to view your stats and achievements.</span>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="public-profile-toggle">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="career-grid">
+            <!-- Certificates Card -->
+            <div class="card">
+              <h3>
+                Certificates
+                <span class="badge-premium">PREMIUM</span>
+              </h3>
+              <p style="color:var(--text-secondary); font-size:0.9rem;">
+                Verified credentials for your achievements.
+              </p>
+              <div class="cert-list">
+                <div class="cert-item disabled">
+                  <span>🏆 Algorithm Master (Diamond)</span>
+                  <span style="font-size:0.8rem; opacity:0.7;">Locked</span>
+                </div>
+                <div class="cert-item disabled">
+                  <span>🔥 30-Day Streak Warrior</span>
+                  <span style="font-size:0.8rem; opacity:0.7;">Locked</span>
+                </div>
+              </div>
+              <button class="submit-btn"
+                style="margin-top:15px; width:100%; opacity: 0.5; cursor: not-allowed; background: var(--bg2);">
+                Unlock Certificates
+              </button>
+            </div>
+
+            <!-- Hiring Marketplace Card -->
+            <div class="card">
+              <h3>
+                Hiring Marketplace
+                <span class="badge-premium">PREMIUM</span>
+              </h3>
+              <div class="setting-item" style="border-bottom:none;">
+                <div class="setting-info">
+                  <span class="setting-label">Open to Work</span>
+                  <span class="setting-desc">Signal recruiters that you are looking.</span>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="open-to-work-toggle" disabled>
+                  <span class="slider" style="background:#333;"></span>
+                </label>
+              </div>
+              <p style="font-size:0.85rem; color:var(--accent1); margin-top:5px;">
+                <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  style="margin-right:4px; display:inline-block; vertical-align:middle;">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z">
+                  </path>
+                </svg>
+                Get 5x more views from top tech companies.
+              </p>
+            </div>
+          </div>
+
+          <!-- Recruiter Analytics (Mock) -->
+          <div class="card" style="margin-top: 20px;">
+            <h3>Recruiter Impressions</h3>
+            <div
+              style="height: 200px; display:flex; align-items:center; justify-content:center; border: 1px dashed rgba(255,255,255,0.1); border-radius: 8px; color: var(--text-secondary); flex-direction: column; gap: 10px;">
+              <div style="font-size: 2rem;">📊</div>
+              <div>Premium Analytics Chart Placeholder</div>
             </div>
           </div>
         </div>
@@ -3436,6 +3642,121 @@
 
       if (profileBtn) profileBtn.addEventListener('click', openProfileModal);
       if (mobileProfileBtn) mobileProfileBtn.addEventListener('click', openProfileModal);
+
+      // Rewards and Settings Full-Screen Views
+      const rewardsBtn = document.getElementById('rewards-btn');
+      const settingsBtn = document.getElementById('settings-btn');
+      const logoContainer = document.querySelector('.brand');
+
+
+      // Function to show full-screen view
+      function showFullScreenView(viewName) {
+        const mainContainer = document.querySelector('main');
+        if (!mainContainer) return;
+
+        // Hide all direct children of main
+        Array.from(mainContainer.children).forEach(child => {
+          child.classList.add('hidden');
+        });
+
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar) sidebar.style.display = 'none';
+
+        // Create or show the full-screen view
+        let viewElement = document.getElementById(`${viewName}-view`);
+
+        if (!viewElement) {
+          viewElement = document.createElement('div');
+          viewElement.id = `${viewName}-view`;
+          // No 'hidden' class initially as we want to show it
+          viewElement.style.cssText = 'padding: 2rem; min-height: 100vh; animation: fadeIn 0.3s ease-in-out; width: 100%;';
+
+          if (viewName === 'rewards') {
+            viewElement.innerHTML = `
+              <div class="card" style="max-width: 800px; margin: 0 auto;">
+                <h1 style="font-size: 2rem; margin-bottom: 1.5rem; color: var(--text-primary);">🏆 Rewards & Achievements</h1>
+                <p style="color: var(--text-secondary); margin-bottom: 2rem;">Track your progress and unlocked milestones.</p>
+                <div style="padding: 40px; text-align: center; background: var(--bg2); border-radius: 12px; border: 1px dashed var(--gray-border);">
+                  <div style="font-size: 3rem; margin-bottom: 1rem;">🚀</div>
+                  <h3>Coming Soon</h3>
+                  <p>We are building a comprehensive rewards system for you!</p>
+                </div>
+              </div>
+            `;
+          } else if (viewName === 'settings') {
+            viewElement.innerHTML = `
+              <div class="card" style="max-width: 800px; margin: 0 auto;">
+                <h1 style="font-size: 2rem; margin-bottom: 1.5rem; color: var(--text-primary);">⚙️ Settings</h1>
+                <p style="color: var(--text-secondary); margin-bottom: 2rem;">Manage your account preferences.</p>
+                <div style="padding: 40px; text-align: center; background: var(--bg2); border-radius: 12px; border: 1px dashed var(--gray-border);">
+                  <div style="font-size: 3rem; margin-bottom: 1rem;">🛠️</div>
+                  <h3>Under Construction</h3>
+                  <p>Advanced settings are currently being implemented.</p>
+                </div>
+              </div>
+            `;
+          }
+
+          mainContainer.appendChild(viewElement);
+        } else {
+          viewElement.classList.remove('hidden');
+        }
+
+        // Close dropdown menu
+        if (dropdownMenu) {
+          dropdownMenu.classList.remove('open');
+        }
+      }
+
+      // Function to return to dashboard
+      function returnToDashboard() {
+        const mainContainer = document.querySelector('main');
+        if (!mainContainer) return;
+
+        // Hide all views
+        Array.from(mainContainer.children).forEach(child => {
+          child.classList.add('hidden');
+        });
+
+        // Show dashboard view
+        const dashboardView = document.getElementById('dashboard-view');
+        if (dashboardView) {
+          dashboardView.classList.remove('hidden');
+        }
+
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar) sidebar.style.display = 'flex';
+
+        // Reset sidebar active state
+        document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => {
+          item.classList.remove('active');
+        });
+        const dashboardLink = document.querySelector('.sidebar-nav .nav-item[data-view="dashboard-view"]');
+        if (dashboardLink) dashboardLink.classList.add('active');
+      }
+
+      // Add event listeners
+      if (rewardsBtn) {
+        rewardsBtn.addEventListener('click', () => {
+          showFullScreenView('rewards');
+        });
+      }
+
+      if (settingsBtn) {
+        settingsBtn.addEventListener('click', () => {
+          showFullScreenView('settings');
+        });
+      }
+
+      if (logoContainer) {
+        // Remove href functionality
+        logoContainer.removeAttribute('href');
+        logoContainer.style.cursor = 'pointer';
+        logoContainer.addEventListener('click', (e) => {
+          e.preventDefault();
+          returnToDashboard();
+        });
+      }
 
       const closeProfileModal = () => {
         profileModalOverlay.classList.remove('open');
@@ -4297,14 +4618,14 @@
               : users.filter(u => u.user_id !== currentUserId).map(u => `
                         <div class="online-user-item" style="display: flex; align-items: center; justify-content: space-between; padding: 12px; background: var(--bg2); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
                           <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--accent1), var(--accent2)); display: flex; align-items: center; justify-content: center; font-weight: 700; color: white;">
+                            <div style="width: 40px; height: 40px; border-radius: 5; background: linear-gradient(135deg, var(--accent1), var(--accent2)); display: flex; align-items: center; justify-content: center; font-weight: 700; color: white;">
                               ${u.user_id.substring(0, 2).toUpperCase()}
                             </div>
                             <div>
                               <div style="color: var(--text-primary); font-weight: 600;">${u.user_id}</div>
                               <div style="color: var(--text-secondary); font-size: 0.8rem;">Status: <span style="color:${u.status === 'battling' ? '#ef4444' : '#22c55e'}">${u.status}</span> • Rating: ${u.rating}</div>
                             </div>
-                          </div>
+                </div>
                           ${u.status === 'battling' ?
                   `<button onclick="window.location.href='/battle.html'" style="padding: 8px 16px; background: #ef4444; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: not-allowed; opacity: 0.7;">Battling</button>` :
                   `<button onclick="window.sendChallengeGlobal('${u.user_id}')" style="padding: 8px 16px; background: linear-gradient(135deg, var(--accent1), var(--accent2)); color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;">Challenge</button>`
@@ -5185,6 +5506,9 @@
 
         document.body.appendChild(overlay);
 
+        // Dispatch success event for MicroLessonManager
+        document.dispatchEvent(new CustomEvent('submit_result', { detail: { success: true } }));
+
         // Attach event listener to Next Problem button
         const nextProblemBtn = document.getElementById('next-problem-btn');
         if (nextProblemBtn) {
@@ -5253,8 +5577,8 @@
            <div style="width:50%;height:100%;background:#0a0a0a;border-left:1px solid rgba(255,255,255,0.1);padding:40px;transform:translateX(100%);transition:transform 0.4s cubic-bezier(0.16,1,0.3,1);display:flex;flex-direction:column;overflow-y:auto;">
              <!-- Header -->
              <div style="margin-bottom:30px;display:flex;align-items:center;gap:15px;">
-                <div style="width:50px;height:50px;border-radius:12px;background:rgba(239,68,68,0.2);display:flex;align-items:center;justify-content:center;font-size:24px;color:#ef4444;">✗</div>
-                <div><h1 style="margin:0;font-size:2rem;color:#ef4444;">Tests Failed</h1><p style="margin:5px 0 0 0;color:#9ca3af;">Keep going, you're learning!</p></div>
+                <div style="width:50px;height:50px;border-radius:12px;background9,68,68,0.2);display:flex;align-items:center;justify-content:center;font-size:24px;color:#ef4444;">✗</div>
+                <div><h1 style="margin:0;font-sizolor:#ef4444;">Tests Failed</h1><p style="margin:5px 0 0 0;color:#9ca3af;">Keep going, you're learning!</p></div>
              </div>
              
              <!-- Stats -->
@@ -5285,6 +5609,10 @@
            </div>`;
 
         document.body.appendChild(overlay);
+
+        // Dispatch failure event for MicroLessonManager
+        document.dispatchEvent(new CustomEvent('submit_result', { detail: { success: false } }));
+
         requestAnimationFrame(() => { overlay.style.opacity = '1'; overlay.children[0].style.transform = 'translateX(0)'; });
       }
 
@@ -5358,9 +5686,8 @@
                 const visibleResults = data.results.filter(r => !r.hidden);
                 console.log('[HIJACK] Filtered visible results:', visibleResults);
 
-                // Update global state so clicking tabs works
+                // Update global state so clicking tabs wks
                 window.currentTestResults = visibleResults;
-
                 const tabs = document.querySelectorAll('.test-case-tab');
                 if (tabs.length) {
                   visibleResults.forEach((res, idx) => {
@@ -5429,7 +5756,9 @@
   <script src="static/js/cognitive/VisualDebugger.js?v=3"></script>
   <script src="static/js/modules/problemHints.js?v=1"></script>
   <script src="static/js/problems_db.js?v=1"></script>
-  <script src="static/js/main.js?v=1002"></script>
+  <script src="static/js/learning/MicroLessonManager.js"></script>
+  <script src="static/js/career/CareerManager.js"></script>
+  <script src="static/js/main.js?v=1003"></script>
 
   <style>
     /* FORCE OVERRIDES FOR LIGHT MODE VISIBILITY */
@@ -5482,6 +5811,7 @@
 
 
   <script src="static/js/phase4.js"></script>
+  <script src="static/js/career/CareerManager.js"></script>
 </body>
 
 </html>
