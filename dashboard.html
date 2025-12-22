@@ -2498,13 +2498,15 @@
       width: 22px;
       height: 22px;
       /* White Checkmark for Professional Contrast */
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
       background-size: contain;
       background-repeat: no-repeat;
       transform: translate(-50%, -50%) scale(0) rotate(-10deg);
       opacity: 0;
       transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
       filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
+      width: 14px;
+      height: 14px;
     }
 
     .custom-checkbox input[type="checkbox"]:checked~.checkmark:after {
@@ -2838,7 +2840,7 @@
       </div>
 
       <div id="practice-view" class="hidden">
-        <div class="card">
+        <div class="card" style="overflow: visible;">
           <h3>
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -4063,23 +4065,7 @@
 
       // --- Practice View Logic ---
       let practiceViewInitialized = false;
-      const problemsData = [
-        { title: "Two Sum", topic: "Arrays & Hashing", difficulty: "Easy", acceptance: "49.1%" }, { title: "Valid Anagram", topic: "Arrays & Hashing", difficulty: "Easy", acceptance: "63.2%" },
-        { title: "Contains Duplicate", topic: "Arrays & Hashing", difficulty: "Easy", acceptance: "61.5%" }, { title: "Group Anagrams", topic: "Arrays & Hashing", difficulty: "Medium", acceptance: "67.0%" },
-        { title: "Top K Frequent Elements", topic: "Arrays & Hashing", difficulty: "Medium", acceptance: "66.0%" }, { title: "Product of Array Except Self", topic: "Arrays & Hashing", difficulty: "Medium", acceptance: "65.9%" },
-        { title: "Longest Consecutive Sequence", topic: "Arrays & Hashing", difficulty: "Medium", acceptance: "49.8%" }, { title: "Valid Palindrome", topic: "Two Pointers", difficulty: "Easy", acceptance: "45.7%" },
-        { title: "3Sum", topic: "Two Pointers", difficulty: "Medium", acceptance: "33.2%" }, { title: "Container With Most Water", topic: "Two Pointers", difficulty: "Medium", acceptance: "55.8%" },
-        { title: "Best Time to Buy and Sell Stock", topic: "Sliding Window", difficulty: "Easy", acceptance: "53.6%" }, { title: "Longest Substring Without Repeating Characters", topic: "Sliding Window", difficulty: "Medium", acceptance: "34.1%" },
-        { title: "Valid Parentheses", topic: "Stack", difficulty: "Easy", acceptance: "41.0%" }, { title: "Min Stack", topic: "Stack", difficulty: "Medium", acceptance: "54.3%" },
-        { title: "Reverse Linked List", topic: "Linked List", difficulty: "Easy", acceptance: "74.8%" }, { title: "Merge Two Sorted Lists", topic: "Linked List", difficulty: "Easy", acceptance: "62.4%" },
-        { title: "Reorder List", topic: "Linked List", difficulty: "Medium", acceptance: "59.2%" }, { title: "Invert Binary Tree", topic: "Trees", difficulty: "Easy", acceptance: "75.7%" },
-        { title: "Maximum Depth of Binary Tree", topic: "Trees", difficulty: "Easy", acceptance: "72.4%" }, { title: "Kth Smallest Element in a BST", topic: "Trees", difficulty: "Medium", acceptance: "68.2%" },
-        { title: "LCA of a Binary Search Tree", topic: "Trees", difficulty: "Medium", acceptance: "60.1%" }, { title: "Implement Trie (Prefix Tree)", topic: "Tries", difficulty: "Medium", acceptance: "61.5%" },
-        { title: "Find Median from Data Stream", topic: "Heaps", difficulty: "Hard", acceptance: "53.1%" }, { title: "Merge K Sorted Lists", topic: "Heaps", difficulty: "Hard", acceptance: "47.2%" },
-        { title: "Climbing Stairs", topic: "Dynamic Programming", difficulty: "Easy", acceptance: "52.3%" }, { title: "Coin Change", topic: "Dynamic Programming", difficulty: "Medium", acceptance: "41.9%" },
-        { title: "Longest Increasing Subsequence", topic: "Dynamic Programming", difficulty: "Medium", acceptance: "53.6%" }, { title: "Number of Islands", topic: "Graphs", difficulty: "Medium", acceptance: "57.9%" },
-        { title: "Clone Graph", topic: "Graphs", difficulty: "Medium", acceptance: "55.8%" }, { title: "Pacific Atlantic Water Flow", topic: "Graphs", difficulty: "Medium", acceptance: "56.4%" },
-      ];
+      const problemsData = window.FULL_PROBLEM_SET || [];
 
       // --- Persistence Logic ---
       let solvedProblemsMap = {};
@@ -5641,6 +5627,13 @@
           btn.disabled = true;
 
           let testCases = (window.problemsDataMap && window.problemsDataMap[title]) ? window.problemsDataMap[title].testCases : [];
+          let hiddenTestCases = (window.problemsDataMap && window.problemsDataMap[title]) ? window.problemsDataMap[title].hiddenTestCases || [] : [];
+
+          // Combine visible and hidden test cases
+          const allTestCases = [
+            ...testCases.map(tc => ({ ...tc, hidden: false })),
+            ...hiddenTestCases.map(tc => ({ ...tc, hidden: true }))
+          ];
 
           try {
             const response = await fetch('/api/submit-code', {
@@ -5650,7 +5643,7 @@
                 code,
                 language: 'python',
                 problemId: title,
-                testCases,
+                testCases: allTestCases,
                 userId: (window.userSettings && window.userSettings.userID) || window.currentUserId
               })
             });
@@ -5754,8 +5747,8 @@
   </script>
   <script src="static/js/cognitive/AdaptiveIDE.js?v=2"></script>
   <script src="static/js/cognitive/VisualDebugger.js?v=3"></script>
-  <script src="static/js/modules/problemHints.js?v=1"></script>
-  <script src="static/js/problems_db.js?v=1"></script>
+  <script src="static/js/modules/problemHints.js?v=3"></script>
+  <script src="static/js/problems_db.js?v=4"></script>
   <script src="static/js/learning/MicroLessonManager.js"></script>
   <script src="static/js/career/CareerManager.js"></script>
   <script src="static/js/main.js?v=1003"></script>

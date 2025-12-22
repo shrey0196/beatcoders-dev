@@ -19,6 +19,17 @@ const ProblemHints = (function () {
       return hintCache[problemTitle];
     }
 
+    // 1. Try Local Data First (Synchronous & Fast)
+    if (window.FULL_PROBLEM_SET) {
+      const problem = window.FULL_PROBLEM_SET.find(p => p.title === problemTitle);
+      if (problem && problem.flowchart) {
+        console.log(`[ProblemHints] Found local hint for: ${problemTitle}`);
+        hintCache[problemTitle] = problem.flowchart;
+        return problem.flowchart;
+      }
+    }
+
+    // 2. Fallback to API
     try {
       const response = await fetch(`http://localhost:8001/api/problems/${encodeURIComponent(problemTitle)}`);
       if (!response.ok) {
@@ -30,7 +41,7 @@ const ProblemHints = (function () {
         return data.hints.mermaid;
       }
     } catch (error) {
-      console.error('Error fetching hint:', error);
+      console.warn('[ProblemHints] API hint fetch failed, checking local...', error);
     }
     return null;
   }
