@@ -3,11 +3,15 @@ AI Mentor Engine
 Provides intelligent coding guidance and mentorship (rule-based for now)
 """
 
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 import random
+from backend.utils.llm import LLMClient
 
 class AIMentorEngine:
-    """AI-powered coding mentor with context-aware responses"""
+    """AI-powered coding mentor with LLM integration and fallback"""
+    
+    def __init__(self):
+        self.llm = LLMClient()
     
     # Response templates by category
     RESPONSES = {
@@ -99,6 +103,45 @@ class AIMentorEngine:
         
         Returns:
             AI mentor response
+        """
+        # Try LLM First
+        if self.llm.provider != "none":
+            llm_response = self._generate_llm_response(message, context)
+            if llm_response:
+                return llm_response
+
+        # Fallback to Rule-Based
+        return self._generate_fallback_response(message, context)
+
+    def _generate_llm_response(self, message: str, context: Dict[str, Any]) -> Optional[str]:
+        """Generate response using LLM"""
+        
+        # Build Context String
+        problem_title = context.get("problem_title", "Unknown Problem")
+        current_code = context.get("user_code", "")
+        # Safely handle language, defaulting to Python if missing or None
+        language = context.get("language") or "python"
+        
+        system_prompt = f"""
+You are an expert AI Coding Mentor for BeatCoders. 
+Your goal is to help the user solve the coding problem: "{problem_title}".
+
+GUIDELINES:
+1. Socratic Method: Do NOT just give the solution. Ask guiding questions.
+2. Be Encouraging: Coding is hard. Validate their effort.
+3. Context Aware: The user is writing code in {language}.
+4. Conciseness: Keep responses short (under 3-4 sentences) unless explaining a complex concept.
+
+CURRENT USER CODE:
+```{language}
+{current_code}
+```
+"""
+        return self.llm.generate(message, system_prompt)
+
+    def _generate_fallback_response(self, message: str, context: Dict[str, Any]) -> str:
+        """
+        [FALLBACK] Generate mentor response based on user message and rules
         """
         message_lower = message.lower()
         

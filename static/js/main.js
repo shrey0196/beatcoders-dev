@@ -80,10 +80,10 @@ function initApp() {
         
         <div style="background: var(--hover-bg); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
           <div style="margin: 8px 0; color: var(--text-secondary);">
-            <strong style="color: var(--text-primary);">Time Complexity:</strong> ${analysis.time_complexity}
+            <strong style="color: var(--text-primary);">Time Complexity:</strong> ${analysis.timeComplexity || analysis.time_complexity || 'N/A'}
           </div>
           <div style="margin: 8px 0; color: var(--text-secondary);">
-            <strong style="color: var(--text-primary);">Space Complexity:</strong> ${analysis.space_complexity}
+            <strong style="color: var(--text-primary);">Space Complexity:</strong> ${analysis.spaceComplexity || analysis.space_complexity || 'N/A'}
           </div>
           <div style="margin: 8px 0; color: var(--text-secondary);">
             <strong style="color: var(--text-primary);">Patterns Detected:</strong> ${analysis.patterns_detected.join(', ') || 'None'}

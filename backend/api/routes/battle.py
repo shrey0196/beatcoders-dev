@@ -15,6 +15,7 @@ from test_cases.hidden_tests import get_hidden_tests
 from config.database import SessionLocal
 from models.user import User
 from sqlalchemy import desc
+from utils.cache import leaderboard_cache
 
 # Battle Problem Registry
 BATTLE_PROBLEMS = {
@@ -447,16 +448,24 @@ async def get_active_users():
 
 @router.get("/api/battle/leaderboard")
 def get_leaderboard():
+    # Check Cache
+    cached = leaderboard_cache.get("top_10")
+    if cached:
+        return cached
+
     db = SessionLocal()
     try:
         # Get top 10 users by Elo
         top_users = db.query(User).filter(User.elo_rating != None).order_by(desc(User.elo_rating)).limit(10).all()
-        return {
+        result = {
             "leaderboard": [
                 {"rank": i+1, "username": u.username or "Unknown", "rating": u.elo_rating}
                 for i, u in enumerate(top_users)
             ]
         }
+        # Set Cache
+        leaderboard_cache.set("top_10", result)
+        return result
     finally:
         db.close()
 

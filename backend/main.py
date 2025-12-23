@@ -92,7 +92,7 @@ run_migrations()
 
 # Import and include routers
 from api.routes import auth, cognitive, submissions, visualization, run_code, problems, battle
-from api.routes import crs, skill_roadmap, ai_mentor, career, micro_lessons  # Phase 4 & 14 & 16 routes
+from api.routes import crs, skill_roadmap, ai_mentor, career, micro_lessons, admin, social  # Phase 4 & 14 & 16 & 6 routes
 
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 app.include_router(cognitive.router, prefix="/api/cognitive", tags=["cognitive"])
@@ -108,6 +108,8 @@ app.include_router(ai_mentor.router, prefix="/api", tags=["ai-mentor"])
 app.include_router(battle.router, tags=["battle"])
 app.include_router(career.router, prefix="/api", tags=["career"])
 app.include_router(micro_lessons.router, prefix="/api", tags=["micro-lessons"])
+app.include_router(admin.router) # Admin routes (prefix defined in router)
+app.include_router(social.router, prefix="/api", tags=["social"])
 
 @app.get("/api")
 async def root():

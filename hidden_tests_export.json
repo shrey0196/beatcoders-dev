@@ -1,0 +1,623 @@
+{
+    "Contains Duplicate": [
+        {
+            "input": {
+                "nums": [
+                    0,
+                    4,
+                    5,
+                    0,
+                    3,
+                    6
+                ]
+            },
+            "output": true
+        },
+        {
+            "input": {
+                "nums": []
+            },
+            "output": false
+        },
+        {
+            "input": {
+                "nums": [
+                    1
+                ]
+            },
+            "output": false
+        }
+    ],
+    "Valid Anagram": [
+        {
+            "input": {
+                "s": "",
+                "t": ""
+            },
+            "output": true
+        },
+        {
+            "input": {
+                "s": "a",
+                "t": "b"
+            },
+            "output": false
+        },
+        {
+            "input": {
+                "s": "ab",
+                "t": "ba"
+            },
+            "output": true
+        },
+        {
+            "input": {
+                "s": "rat",
+                "t": "car"
+            },
+            "output": false
+        }
+    ],
+    "Two Sum": [
+        {
+            "input": {
+                "nums": [
+                    1,
+                    2
+                ],
+                "target": 3
+            },
+            "output": [
+                0,
+                1
+            ]
+        },
+        {
+            "input": {
+                "nums": [
+                    1,
+                    2,
+                    3,
+                    4
+                ],
+                "target": 7
+            },
+            "output": [
+                2,
+                3
+            ]
+        },
+        {
+            "input": {
+                "nums": [
+                    -1,
+                    -2,
+                    -3,
+                    -4
+                ],
+                "target": -7
+            },
+            "output": [
+                2,
+                3
+            ]
+        }
+    ],
+    "Group Anagrams": [
+        {
+            "input": {
+                "strs": [
+                    ""
+                ]
+            },
+            "output": [
+                [
+                    ""
+                ]
+            ]
+        },
+        {
+            "input": {
+                "strs": [
+                    "a"
+                ]
+            },
+            "output": [
+                [
+                    "a"
+                ]
+            ]
+        },
+        {
+            "input": {
+                "strs": [
+                    "abc",
+                    "bca",
+                    "cab",
+                    "xyz",
+                    "zyx",
+                    "zxy"
+                ]
+            },
+            "output": [
+                [
+                    "abc",
+                    "bca",
+                    "cab"
+                ],
+                [
+                    "xyz",
+                    "zyx",
+                    "zxy"
+                ]
+            ]
+        }
+    ],
+    "Top K Frequent Elements": [
+        {
+            "input": {
+                "nums": [
+                    1,
+                    2,
+                    3
+                ],
+                "k": 3
+            },
+            "output": [
+                1,
+                2,
+                3
+            ]
+        },
+        {
+            "input": {
+                "nums": [
+                    1,
+                    1,
+                    2,
+                    2,
+                    2,
+                    3
+                ],
+                "k": 1
+            },
+            "output": [
+                2
+            ]
+        },
+        {
+            "input": {
+                "nums": [
+                    -1,
+                    -1
+                ],
+                "k": 1
+            },
+            "output": [
+                -1
+            ]
+        }
+    ],
+    "Product of Array Except Self": [
+        {
+            "input": {
+                "nums": [
+                    0,
+                    0
+                ]
+            },
+            "output": [
+                0,
+                0
+            ]
+        },
+        {
+            "input": {
+                "nums": [
+                    1,
+                    1
+                ]
+            },
+            "output": [
+                1,
+                1
+            ]
+        },
+        {
+            "input": {
+                "nums": [
+                    2,
+                    3
+                ]
+            },
+            "output": [
+                3,
+                2
+            ]
+        }
+    ],
+    "Longest Consecutive Sequence": [
+        {
+            "input": {
+                "nums": []
+            },
+            "output": 0
+        },
+        {
+            "input": {
+                "nums": [
+                    1
+                ]
+            },
+            "output": 1
+        },
+        {
+            "input": {
+                "nums": [
+                    1,
+                    2,
+                    0,
+                    1
+                ]
+            },
+            "output": 3
+        }
+    ],
+    "Valid Palindrome": [
+        {
+            "input": {
+                "s": "ab_a"
+            },
+            "output": true
+        },
+        {
+            "input": {
+                "s": "0P"
+            },
+            "output": false
+        },
+        {
+            "input": {
+                "s": ".,"
+            },
+            "output": true
+        }
+    ],
+    "3Sum": [
+        {
+            "input": {
+                "nums": []
+            },
+            "output": []
+        },
+        {
+            "input": {
+                "nums": [
+                    0
+                ]
+            },
+            "output": []
+        },
+        {
+            "input": {
+                "nums": [
+                    -2,
+                    0,
+                    1,
+                    1,
+                    2
+                ]
+            },
+            "output": [
+                [
+                    -2,
+                    0,
+                    2
+                ],
+                [
+                    -2,
+                    1,
+                    1
+                ]
+            ]
+        }
+    ],
+    "Container With Most Water": [
+        {
+            "input": {
+                "height": [
+                    1,
+                    2,
+                    1
+                ]
+            },
+            "output": 2
+        },
+        {
+            "input": {
+                "height": [
+                    1,
+                    2,
+                    4,
+                    3
+                ]
+            },
+            "output": 4
+        },
+        {
+            "input": {
+                "height": [
+                    10,
+                    10
+                ]
+            },
+            "output": 10
+        }
+    ],
+    "Best Time to Buy and Sell Stock": [
+        {
+            "input": {
+                "prices": [
+                    2,
+                    4,
+                    1
+                ]
+            },
+            "output": 2
+        },
+        {
+            "input": {
+                "prices": [
+                    100,
+                    10,
+                    5,
+                    0
+                ]
+            },
+            "output": 0
+        },
+        {
+            "input": {
+                "prices": [
+                    1,
+                    5,
+                    2,
+                    10
+                ]
+            },
+            "output": 9
+        }
+    ],
+    "Longest Substring Without Repeating Characters": [
+        {
+            "input": {
+                "s": ""
+            },
+            "output": 0
+        },
+        {
+            "input": {
+                "s": "au"
+            },
+            "output": 2
+        },
+        {
+            "input": {
+                "s": "dvdf"
+            },
+            "output": 3
+        }
+    ],
+    "Valid Parentheses": [
+        {
+            "input": {
+                "s": "["
+            },
+            "output": false
+        },
+        {
+            "input": {
+                "s": "(("
+            },
+            "output": false
+        },
+        {
+            "input": {
+                "s": "){"
+            },
+            "output": false
+        }
+    ],
+    "Binary Search": [
+        {
+            "input": {
+                "nums": [
+                    1,
+                    3,
+                    5,
+                    6
+                ],
+                "target": 2
+            },
+            "output": -1
+        },
+        {
+            "input": {
+                "nums": [
+                    1,
+                    3,
+                    5,
+                    6
+                ],
+                "target": 7
+            },
+            "output": -1
+        },
+        {
+            "input": {
+                "nums": [
+                    1
+                ],
+                "target": 0
+            },
+            "output": -1
+        }
+    ],
+    "Search a 2D Matrix": [
+        {
+            "input": {
+                "matrix": [
+                    [
+                        1
+                    ]
+                ],
+                "target": 0
+            },
+            "output": false
+        },
+        {
+            "input": {
+                "matrix": [
+                    [
+                        1,
+                        3
+                    ],
+                    [
+                        5,
+                        7
+                    ]
+                ],
+                "target": 5
+            },
+            "output": true
+        },
+        {
+            "input": {
+                "matrix": [
+                    [
+                        1,
+                        3
+                    ],
+                    [
+                        5,
+                        7
+                    ]
+                ],
+                "target": 2
+            },
+            "output": false
+        }
+    ],
+    "Reorder List": [
+        {
+            "input": {
+                "head": [
+                    1
+                ]
+            },
+            "output": [
+                1
+            ]
+        },
+        {
+            "input": {
+                "head": [
+                    1,
+                    2
+                ]
+            },
+            "output": [
+                1,
+                2
+            ]
+        },
+        {
+            "input": {
+                "head": []
+            },
+            "output": []
+        }
+    ],
+    "Kth Smallest Element in a BST": [
+        {
+            "input": {
+                "root": [
+                    1
+                ],
+                "k": 1
+            },
+            "output": 1
+        },
+        {
+            "input": {
+                "root": [
+                    2,
+                    1
+                ],
+                "k": 2
+            },
+            "output": 2
+        },
+        {
+            "input": {
+                "root": [
+                    2,
+                    1,
+                    3
+                ],
+                "k": 3
+            },
+            "output": 3
+        }
+    ],
+    "Climbing Stairs": [
+        {
+            "input": {
+                "n": 1
+            },
+            "output": 1
+        },
+        {
+            "input": {
+                "n": 5
+            },
+            "output": 8
+        },
+        {
+            "input": {
+                "n": 6
+            },
+            "output": 13
+        }
+    ],
+    "House Robber": [
+        {
+            "input": {
+                "nums": [
+                    0
+                ]
+            },
+            "output": 0
+        },
+        {
+            "input": {
+                "nums": [
+                    1,
+                    2
+                ]
+            },
+            "output": 2
+        },
+        {
+            "input": {
+                "nums": [
+                    2,
+                    1,
+                    1,
+                    2
+                ]
+            },
+            "output": 4
+        }
+    ]
+}

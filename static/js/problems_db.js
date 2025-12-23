@@ -36,11 +36,7 @@ window.FULL_PROBLEM_SET = [
       { input: { nums: [1, 2, 3, 4] }, output: false },
       { input: { nums: [1, 1, 1, 3, 3, 4, 3, 2, 4, 2] }, output: true }
     ],
-    hiddenTestCases: [
-      { input: { nums: [0, 4, 5, 0, 3, 6] }, output: true },
-      { input: { nums: [] }, output: false },
-      { input: { nums: [1] }, output: false }
-    ],
+    
     flowchart: `flowchart TD
     A(["Start"]) --> B{"Is nums empty?"}
     B -- Yes --> C(["Return False"])
@@ -87,12 +83,7 @@ window.FULL_PROBLEM_SET = [
       { input: { s: "rat", t: "car" }, output: false },
       { input: { s: "ab", t: "pi" }, output: false }
     ],
-    hiddenTestCases: [
-      { input: { s: "", t: "" }, output: true },
-      { input: { s: "a", t: "b" }, output: false },
-      { input: { s: "ab", t: "ba" }, output: true },
-      { input: { s: "rat", t: "car" }, output: false }
-    ],
+    
     flowchart: `flowchart TD
     A(["Start"]) --> B{"Length s != Length t?"}
     B -- Yes --> C(["Return False"])
@@ -138,11 +129,7 @@ window.FULL_PROBLEM_SET = [
       { input: { nums: [3, 2, 4], target: 6 }, output: [1, 2] },
       { input: { nums: [3, 3], target: 6 }, output: [0, 1] }
     ],
-    hiddenTestCases: [
-      { input: { nums: [1, 2], target: 3 }, output: [0, 1] },
-      { input: { nums: [1, 2, 3, 4], target: 7 }, output: [2, 3] },
-      { input: { nums: [-1, -2, -3, -4], target: -7 }, output: [2, 3] }
-    ],
+    
     flowchart: `flowchart TD
     A(["Start"]) --> B["Init HashMap prevMap"]
     B --> C["For i, n in enumerate(nums)"]
@@ -188,11 +175,7 @@ window.FULL_PROBLEM_SET = [
       { input: { strs: [""] }, output: [[""]] },
       { input: { strs: ["a"] }, output: [["a"]] }
     ],
-    hiddenTestCases: [
-      { input: { strs: [""] }, output: [[""]] },
-      { input: { strs: ["a"] }, output: [["a"]] },
-      { input: { strs: ["abc", "bca", "cab", "xyz", "zyx", "zxy"] }, output: [["abc", "bca", "cab"], ["xyz", "zyx", "zxy"]] }
-    ],
+    
     flowchart: `flowchart TD
     A(["Start"]) --> B["Init HashMap groups"]
     B --> C["For s in strs"]
@@ -237,11 +220,7 @@ window.FULL_PROBLEM_SET = [
       { input: { nums: [1], k: 1 }, output: [1] },
       { input: { nums: [4, 4, 4, 1], k: 1 }, output: [4] }
     ],
-    hiddenTestCases: [
-      { input: { nums: [1, 2, 3], k: 3 }, output: [1, 2, 3] },
-      { input: { nums: [1, 1, 2, 2, 2, 3], k: 1 }, output: [2] },
-      { input: { nums: [-1, -1], k: 1 }, output: [-1] }
-    ],
+    
     flowchart: `flowchart TD
     A(["Start"]) --> B["Count freq of each num"]
     B --> C["Init bucket array of size len(nums)+1"]
@@ -285,11 +264,7 @@ window.FULL_PROBLEM_SET = [
       { input: { nums: [1, 2, 3, 4] }, output: [24, 12, 8, 6] },
       { input: { nums: [-1, 1, 0, -3, 3] }, output: [0, 0, 9, 0, 0] }
     ],
-    hiddenTestCases: [
-      { input: { nums: [0, 0] }, output: [0, 0] },
-      { input: { nums: [1, 1] }, output: [1, 1] },
-      { input: { nums: [2, 3] }, output: [3, 2] }
-    ],
+    
     flowchart: `flowchart TD
     A(["Start"]) --> B["Init result array with 1s"]
     B --> C["prefix = 1"]
@@ -335,11 +310,7 @@ window.FULL_PROBLEM_SET = [
       { input: { nums: [100, 4, 200, 1, 3, 2] }, output: 4 },
       { input: { nums: [0, 3, 7, 2, 5, 8, 4, 6, 0, 1] }, output: 9 }
     ],
-    hiddenTestCases: [
-      { input: { nums: [] }, output: 0 },
-      { input: { nums: [1] }, output: 1 },
-      { input: { nums: [1, 2, 0, 1] }, output: 3 }
-    ],
+    
     flowchart: `flowchart TD
     A(["Start"]) --> B["numSet = set(nums)"]
     B --> C["longest = 0"]
@@ -391,11 +362,7 @@ window.FULL_PROBLEM_SET = [
       { input: { s: "race a car" }, output: false },
       { input: { s: " " }, output: true }
     ],
-    hiddenTestCases: [
-      { input: { s: "ab_a" }, output: true },
-      { input: { s: "0P" }, output: false },
-      { input: { s: ".," }, output: true }
-    ],
+    
     flowchart: `flowchart TD
     A(["Start"]) --> B["Filter non-alphanumeric chars"]
     B --> C["Convert to lowercase"]
@@ -442,11 +409,7 @@ window.FULL_PROBLEM_SET = [
       { input: { nums: [0, 1, 1] }, output: [] },
       { input: { nums: [0, 0, 0] }, output: [[0, 0, 0]] }
     ],
-    hiddenTestCases: [
-      { input: { nums: [] }, output: [] },
-      { input: { nums: [0] }, output: [] },
-      { input: { nums: [-2, 0, 1, 1, 2] }, output: [[-2, 0, 2], [-2, 1, 1]] }
-    ],
+    
     flowchart: `flowchart TD
     A(["Sort nums"]) --> B["Loop i from 0 to len-2"]
     B --> C{"i > 0 and nums[i] == nums[i-1]?"}
@@ -500,11 +463,7 @@ window.FULL_PROBLEM_SET = [
       { input: { height: [1, 1] }, output: 1 },
       { input: { height: [4, 3, 2, 1, 4] }, output: 16 }
     ],
-    hiddenTestCases: [
-      { input: { height: [1, 2, 1] }, output: 2 },
-      { input: { height: [1, 2, 4, 3] }, output: 4 },
-      { input: { height: [10, 10] }, output: 10 }
-    ],
+    
     flowchart: `flowchart TD
     A(["Init Left=0, Right=len-1"]) --> B["Init maxArea=0"]
     B --> C{"Left < Right?"}
@@ -554,11 +513,7 @@ window.FULL_PROBLEM_SET = [
       { input: { prices: [7, 6, 4, 3, 1] }, output: 0 },
       { input: { prices: [1, 2, 7, 1, 3] }, output: 6 }
     ],
-    hiddenTestCases: [
-      { input: { prices: [2, 4, 1] }, output: 2 },
-      { input: { prices: [100, 10, 5, 0] }, output: 0 },
-      { input: { prices: [1, 5, 2, 10] }, output: 9 }
-    ],
+    
     flowchart: `flowchart TD
     A(["Init minPrice=inf, maxPro=0"]) --> B["For price in prices"]
     B --> C{"price < minPrice?"}
@@ -604,11 +559,7 @@ window.FULL_PROBLEM_SET = [
       { input: { s: "bbbbb" }, output: 1 },
       { input: { s: "pwwkew" }, output: 3 }
     ],
-    hiddenTestCases: [
-      { input: { s: "" }, output: 0 },
-      { input: { s: "au" }, output: 2 },
-      { input: { s: "dvdf" }, output: 3 }
-    ],
+    
     flowchart: `flowchart TD
     A(["Init charSet, L=0, res=0"]) --> B["Loop R from 0 to len-1"]
     B --> C{"s[R] in charSet?"}
@@ -656,11 +607,7 @@ window.FULL_PROBLEM_SET = [
       { input: { s: "(]" }, output: false },
       { input: { s: "([)]" }, output: false }
     ],
-    hiddenTestCases: [
-      { input: { s: "[" }, output: false },
-      { input: { s: "((" }, output: false },
-      { input: { s: "){" }, output: false }
-    ],
+    
     flowchart: `flowchart TD
     A(["Init Stack"]) --> B["For char c in s"]
     B --> C{"c in Map?"}
@@ -697,7 +644,7 @@ window.FULL_PROBLEM_SET = [
       </ul>
     `,
     testCases: [],
-    hiddenTestCases: [],
+    
     flowchart: `flowchart TD
     A(["Class MinStack"]) --> B["Init: stack=[], minStack=[]"]
     B --> C["Push(val): stack.append(val)"]
@@ -744,11 +691,7 @@ window.FULL_PROBLEM_SET = [
       { input: { nums: [-1, 0, 3, 5, 9, 12], target: 2 }, output: -1 },
       { input: { nums: [5], target: 5 }, output: 0 }
     ],
-    hiddenTestCases: [
-      { input: { nums: [1, 3, 5, 6], target: 2 }, output: -1 },
-      { input: { nums: [1, 3, 5, 6], target: 7 }, output: -1 },
-      { input: { nums: [1], target: 0 }, output: -1 }
-    ],
+    
     flowchart: `flowchart TD
     A(["Init L=0, R=len-1"]) --> B{"L <= R?"}
     B -- No --> C(["Return -1"])
@@ -796,11 +739,7 @@ window.FULL_PROBLEM_SET = [
       { input: { matrix: [[1, 3, 5, 7], [10, 11, 16, 20], [23, 30, 34, 60]], target: 13 }, output: false },
       { input: { matrix: [[1]], target: 1 }, output: true }
     ],
-    hiddenTestCases: [
-      { input: { matrix: [[1]], target: 0 }, output: false },
-      { input: { matrix: [[1, 3], [5, 7]], target: 5 }, output: true },
-      { input: { matrix: [[1, 3], [5, 7]], target: 2 }, output: false }
-    ],
+    
     flowchart: `flowchart TD
     A(["Init top=0, bot=m-1"]) --> B{"top <= bot?"}
     B -- No --> C(["Return False"])
@@ -846,7 +785,7 @@ window.FULL_PROBLEM_SET = [
       </ul>
     `,
     testCases: [],
-    hiddenTestCases: [],
+    
     flowchart: `flowchart TD
     A(["Init prev=None, curr=head"]) --> B{"curr is None?"}
     B -- Yes --> C(["Return prev"])
@@ -886,7 +825,7 @@ window.FULL_PROBLEM_SET = [
       </ul>
     `,
     testCases: [],
-    hiddenTestCases: [],
+    
     flowchart: `flowchart TD
     A(["Init dummy node"]) --> B["tail = dummy"]
     B --> C{"list1 and list2?"}
@@ -934,11 +873,7 @@ window.FULL_PROBLEM_SET = [
       { input: { head: [1, 2, 3, 4] }, output: [1, 4, 2, 3] },
       { input: { head: [1, 2, 3, 4, 5] }, output: [1, 5, 2, 4, 3] }
     ],
-    hiddenTestCases: [
-      { input: { head: [1] }, output: [1] },
-      { input: { head: [1, 2] }, output: [1, 2] },
-      { input: { head: [] }, output: [] }
-    ],
+    
     flowchart: `flowchart TD
     A(["Start"]) --> B{"head or head.next is None?"}
     B -- Yes --> C(["Return"])
@@ -971,7 +906,7 @@ window.FULL_PROBLEM_SET = [
       </ul>
     `,
     testCases: [],
-    hiddenTestCases: [],
+    
     flowchart: `flowchart TD
     A{"root is None?"} --> B -- Yes --> C(["Return None"])
     A -- No --> D["Swap left and right children"]
@@ -1005,7 +940,7 @@ window.FULL_PROBLEM_SET = [
       </ul>
     `,
     testCases: [],
-    hiddenTestCases: [],
+    
     flowchart: `flowchart TD
     A{"root is None?"} --> B -- Yes --> C(["Return 0"])
     A -- No --> D["l_depth = maxDepth(root.left)"]
@@ -1044,11 +979,7 @@ window.FULL_PROBLEM_SET = [
       { input: { root: [3, 1, 4, null, 2], k: 1 }, output: 1 },
       { input: { root: [5, 3, 6, 2, 4, null, null, 1], k: 3 }, output: 3 }
     ],
-    hiddenTestCases: [
-      { input: { root: [1], k: 1 }, output: 1 },
-      { input: { root: [2, 1], k: 2 }, output: 2 },
-      { input: { root: [2, 1, 3], k: 3 }, output: 3 }
-    ],
+    
     flowchart: `flowchart TD
     A(["Start"]) --> B["Stack = []"]
     B --> C["Result = 0"]
@@ -1099,7 +1030,7 @@ window.FULL_PROBLEM_SET = [
       { input: { root: [6, 2, 8, 0, 4, 7, 9, null, null, 3, 5], p: 2, q: 8 }, output: 6 },
       { input: { root: [6, 2, 8, 0, 4, 7, 9, null, null, 3, 5], p: 2, q: 4 }, output: 2 }
     ],
-    hiddenTestCases: [],
+    
     flowchart: `flowchart TD
     A(["Start"]) --> B["curr = root"]
     B --> C{"curr is not None?"}
@@ -1146,7 +1077,7 @@ window.FULL_PROBLEM_SET = [
       </ul>
     `,
     testCases: [],
-    hiddenTestCases: [],
+    
     flowchart: `flowchart TD
     A(["Class Trie"]) --> B["Init: root = TrieNode()"]
     B --> C["Insert(word)"]
@@ -1199,7 +1130,7 @@ window.FULL_PROBLEM_SET = [
       </ul>
     `,
     testCases: [],
-    hiddenTestCases: [],
+    
     flowchart: `flowchart TD
     A(["Class MedianFinder"]) --> B["Init: small=[-], large=[+]"]
     B --> C["addNum(num)"]
@@ -1242,7 +1173,7 @@ window.FULL_PROBLEM_SET = [
       </ul>
     `,
     testCases: [],
-    hiddenTestCases: [],
+    
     flowchart: `flowchart TD
     A(["Start"]) --> B["Init MinHeap"]
     B --> C["For each list in lists"]
@@ -1287,7 +1218,7 @@ window.FULL_PROBLEM_SET = [
       </ul>
     `,
     testCases: [],
-    hiddenTestCases: [],
+    
     flowchart: `flowchart TD
     A(["Init islands = 0"]) --> B["Loop r in rows"]
     B --> C["Loop c in cols"]
@@ -1321,7 +1252,7 @@ window.FULL_PROBLEM_SET = [
       </ul>
     `,
     testCases: [],
-    hiddenTestCases: [],
+    
     flowchart: `flowchart TD
     A{"node is None?"} --> B -- Yes --> C(["Return None"])
     A -- No --> D["Init HashMap oldToNew"]
@@ -1370,7 +1301,7 @@ window.FULL_PROBLEM_SET = [
       { input: { heights: [[1, 2, 2, 3, 5], [3, 2, 3, 4, 4], [2, 4, 5, 3, 1], [6, 7, 1, 4, 5], [5, 1, 1, 2, 4]] }, output: [[0, 4], [1, 3], [1, 4], [2, 2], [3, 0], [3, 1], [4, 0]] },
       { input: { heights: [[1]] }, output: [[0, 0]] }
     ],
-    hiddenTestCases: [],
+    
     flowchart: `flowchart TD
     A(["Start"]) --> B["Init Pacific & Atlantic sets"]
     B --> C["DFS from top/left (Pacific)"]
@@ -1410,11 +1341,7 @@ window.FULL_PROBLEM_SET = [
       </ul>
     `,
     testCases: [{ input: { n: 2 }, output: 2 }, { input: { n: 3 }, output: 3 }, { input: { n: 4 }, output: 5 }],
-    hiddenTestCases: [
-      { input: { n: 1 }, output: 1 },
-      { input: { n: 5 }, output: 8 },
-      { input: { n: 6 }, output: 13 }
-    ],
+    
     flowchart: `flowchart TD
     A{"n <= 2?"} --> B -- Yes --> C(["Return n"])
     A -- No --> D["one = 1, two = 2"]
@@ -1456,11 +1383,7 @@ window.FULL_PROBLEM_SET = [
       </ul>
     `,
     testCases: [{ input: { nums: [1, 2, 3, 1] }, output: 4 }, { input: { nums: [2, 7, 9, 3, 1] }, output: 12 }, { input: { nums: [2, 1] }, output: 2 }],
-    hiddenTestCases: [
-      { input: { nums: [0] }, output: 0 },
-      { input: { nums: [1, 2] }, output: 2 },
-      { input: { nums: [2, 1, 1, 2] }, output: 4 }
-    ],
+    
     flowchart: `flowchart TD
     A(["rob1 = 0, rob2 = 0"]) --> B["For n in nums"]
     B --> C["temp = max(n + rob1, rob2)"]
@@ -1505,7 +1428,7 @@ window.FULL_PROBLEM_SET = [
       { input: { coins: [2], amount: 3 }, output: -1 },
       { input: { coins: [1], amount: 0 }, output: 0 }
     ],
-    hiddenTestCases: [],
+    
     flowchart: `flowchart TD
     A(["dp = [amount+1] * (amount + 1)"]) --> B["dp[0] = 0"]
     B --> C["For a from 1 to amount"]
@@ -1554,7 +1477,7 @@ window.FULL_PROBLEM_SET = [
       { input: { nums: [0, 1, 0, 3, 2, 3] }, output: 4 },
       { input: { nums: [7, 7, 7, 7, 7, 7, 7] }, output: 1 }
     ],
-    hiddenTestCases: [],
+    
     flowchart: `flowchart TD
     A(["LIS = [1] * len(nums)"]) --> B["Loop i from len-1 to 0"]
     B --> C["Loop j from i+1 to len-1"]

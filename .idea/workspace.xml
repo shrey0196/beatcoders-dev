@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6c39dabe-5f2e-49dc-b066-1a9e42abd9f5" name="Changes" comment="added focus mode">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="6c39dabe-5f2e-49dc-b066-1a9e42abd9f5" name="Changes" comment="solved filter issue">
+      <change beforePath="$PROJECT_DIR$/backend/test_cases/hidden_tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/test_cases/hidden_tests.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/problems_db.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/problems_db.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -150,7 +151,15 @@
       <option name="project" value="LOCAL" />
       <updated>1765954350765</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="solved filter issue">
+      <option name="closed" value="true" />
+      <created>1766413372283</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1766413372283</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -167,6 +176,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="added filter button and checkbox" />
     <MESSAGE value="added career hub" />
-    <option name="LAST_COMMIT_MESSAGE" value="added career hub" />
+    <MESSAGE value="solved filter issue" />
+    <option name="LAST_COMMIT_MESSAGE" value="solved filter issue" />
   </component>
 </project>
