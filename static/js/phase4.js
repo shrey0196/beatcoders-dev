@@ -323,7 +323,7 @@ const CRSModule = {
         const result = await response.json();
         console.log('CRS updated:', result);
         // Refresh CRS display
-        await this.fetchCRS(userId);
+        await this.fetchCRSData();
         this.renderCRSBadge();
       }
     } catch (error) {
@@ -703,11 +703,104 @@ const AIMentorModule = {
   /**
    * Open mentor chat modal
    */
-  openMentorChat() {
-    // TODO: Implement chat modal
-    alert('AI Mentor chat interface coming soon!');
+  openMentorChat(context = {}) {
+    this.activeContext = context;
+    this.createChatModal();
+    const modal = document.getElementById('mentor-chat-modal');
+    if (modal) {
+      modal.style.display = 'flex';
+      // Auto-focus input
+      const input = document.getElementById('mentor-chat-input');
+      if (input) input.focus();
+    }
+  },
+
+  createChatModal() {
+    if (document.getElementById('mentor-chat-modal')) return;
+
+    const overlay = document.createElement('div');
+    overlay.id = 'mentor-chat-modal';
+    overlay.className = 'crs-modal-overlay'; // Reuse existing modal style
+    overlay.style.zIndex = '10000';
+    overlay.style.display = 'none';
+
+    overlay.innerHTML = `
+          <div class="crs-modal-content" style="max-width: 500px; height: 600px; display: flex; flex-direction: column;">
+             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 15px;">
+                 <h3 style="margin: 0; display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 24px;">🤖</span> AI Mentor
+                 </h3>
+                 <button onclick="document.getElementById('mentor-chat-modal').style.display='none'" style="background: none; border: none; font-size: 24px; color: var(--text-secondary); cursor: pointer;">×</button>
+             </div>
+             
+             <div id="mentor-chat-body" style="flex: 1; overflow-y: auto; background: var(--bg-secondary); border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+                 <div class="mentor-message system" style="background: rgba(78, 168, 255, 0.1); border: 1px solid var(--accent1); padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+                    Hello! I observe your coding style. I'm here to help you optimize and learn. Ask me anything!
+                 </div>
+             </div>
+             
+             <div style="display: flex; gap: 10px;">
+                 <input type="text" id="mentor-chat-input" placeholder="Ask a question..." style="flex: 1; background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-primary); padding: 10px; border-radius: 6px;">
+                 <button id="mentor-send-btn" style="background: var(--accent1); color: white; border: none; padding: 0 20px; border-radius: 6px; font-weight: 600; cursor: pointer;">Send</button>
+             </div>
+          </div>
+      `;
+
+    document.body.appendChild(overlay);
+
+    // Bind Send Logic
+    const sendBtn = overlay.querySelector('#mentor-send-btn');
+    const input = overlay.querySelector('#mentor-chat-input');
+
+    const sendMessage = async () => {
+      const text = input.value.trim();
+      if (!text) return;
+
+      // User Message
+      const chatBody = document.getElementById('mentor-chat-body');
+      const userMsg = document.createElement('div');
+      userMsg.className = 'mentor-message user';
+      userMsg.style.cssText = "background: var(--bg-tertiary); padding: 10px; border-radius: 8px; margin-bottom: 10px; text-align: right; margin-left: 20%;";
+      userMsg.textContent = text;
+      chatBody.appendChild(userMsg);
+      chatBody.scrollTop = chatBody.scrollHeight;
+
+      input.value = '';
+
+      // Placeholder loading
+      const loading = document.createElement('div');
+      loading.textContent = 'Thinking...';
+      loading.style.cssText = "font-style: italic; color: var(--text-secondary); margin-bottom: 10px;";
+      chatBody.appendChild(loading);
+
+      // API Call
+      const response = await this.sendMessage(this.getUserId() || 'guest', text, this.activeContext);
+      loading.remove();
+
+      if (response) {
+        const botMsg = document.createElement('div');
+        botMsg.className = 'mentor-message bot';
+        botMsg.style.cssText = "background: rgba(78, 168, 255, 0.1); border: 1px solid var(--accent1); padding: 10px; border-radius: 8px; margin-bottom: 10px;";
+        botMsg.innerHTML = (typeof marked !== 'undefined' && marked.parse)
+          ? marked.parse(response.response)
+          : response.response.replace(/\n/g, '<br>');
+        // Use marked if available, else plain text
+        chatBody.appendChild(botMsg);
+        chatBody.scrollTop = chatBody.scrollHeight;
+      }
+    };
+
+    sendBtn.onclick = sendMessage;
+    input.onkeypress = (e) => { if (e.key === 'Enter') sendMessage(); };
+  },
+
+  getUserId() {
+    return window.currentUserId || localStorage.getItem('beatCodersUserID') || sessionStorage.getItem('userId') || localStorage.getItem('userId');
   }
 };
+
+// Expose globally for header buttons and main.js interactions
+window.openMentorChat = (context) => AIMentorModule.openMentorChat(context);
 
 // ============================================================================
 // Premium Modal

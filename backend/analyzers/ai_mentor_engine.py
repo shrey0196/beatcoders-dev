@@ -5,7 +5,7 @@ Provides intelligent coding guidance and mentorship (rule-based for now)
 
 from typing import Dict, List, Any, Optional
 import random
-from backend.utils.llm import LLMClient
+from utils.llm import LLMClient
 
 class AIMentorEngine:
     """AI-powered coding mentor with LLM integration and fallback"""

@@ -321,6 +321,17 @@ function initApp() {
           }
           container.innerHTML = ''; // Force clear DOM
 
+          // ANTI-CHEAT / PEDAGOGY: Disable Copy/Paste
+          const blockAction = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (window.showToast) window.showToast("🚫 Copy/Paste is disabled to encourage deep processing.");
+            return false;
+          };
+          container.addEventListener('paste', blockAction, true);
+          container.addEventListener('copy', blockAction, true);
+          container.addEventListener('cut', blockAction, true);
+
           editorInstance = monaco.editor.create(container, {
             value: template,
             language: 'python',
@@ -333,6 +344,31 @@ function initApp() {
           });
 
           window.editorInstance = editorInstance;
+
+          // ROBUST BLOCKING: KeyDown Interceptor
+          editorInstance.onKeyDown((e) => {
+            const isCtrlOrCmd = e.ctrlKey || e.metaKey;
+            // KeyC=33, KeyV=52, KeyX=54 (approx, use monaco enum if possible, or just checking code)
+            // Safer to check by code string or keycode from monaco object if available
+            if (isCtrlOrCmd && (e.code === 'KeyC' || e.code === 'KeyV' || e.code === 'KeyX')) {
+              e.preventDefault();
+              e.stopPropagation();
+              if (window.showToast) window.showToast("🚫 Shortcuts disabled.");
+            }
+          });
+
+          // Override Paste Command
+          editorInstance.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyV, () => {
+            if (window.showToast) window.showToast("🚫 Paste disabled.");
+          });
+
+          // Dom Node Listener (Directly on editor DOM)
+          const domNode = editorInstance.getDomNode();
+          if (domNode) {
+            domNode.addEventListener('paste', (e) => { e.preventDefault(); e.stopPropagation(); }, true);
+            domNode.addEventListener('copy', (e) => { e.preventDefault(); e.stopPropagation(); }, true);
+            domNode.addEventListener('contextmenu', (e) => { e.preventDefault(); e.stopPropagation(); }, true); // Block context menu entirely
+          }
 
           // FORCE FOCUS and layout
           setTimeout(() => {
@@ -352,6 +388,7 @@ function initApp() {
             const taskId = problemTitle.toLowerCase().replace(/\s+/g, '-');
             console.log(`[Main] Attaching observer to task: ${taskId} `);
             cognitiveObserver.attach(editorInstance, taskId);
+            window.cognitiveObserver = cognitiveObserver; // Expose globally
           }
         }
       });
@@ -1436,6 +1473,31 @@ function initApp() {
       }
     });
   }
+
+  window.triggerMentorInterrogation = function (reason) {
+    if (!window.openMentorChat) return;
+
+    console.log('[Interrogation] Triggering for:', reason);
+    window.openMentorChat({ source: 'interrogation', trigger: reason }); // Open the modal
+
+    const chatBody = document.getElementById('mentor-chat-body');
+    if (chatBody) {
+      const msg = document.createElement('div');
+      msg.className = 'mentor-message system-alert';
+      msg.style.cssText = "background: rgba(239, 68, 68, 0.1); border: 1px solid var(--red); color: var(--text-primary); padding: 10px; border-radius: 8px; margin-bottom: 10px;";
+
+      let text = "I noticed unusual activity.";
+      if (reason === 'PASTE') {
+        text = "🤖 <b>Paste Detected!</b><br>I see you pasted a solution. To ensuring deep learning, please <b>explain the logic</b> of the code you just added.";
+      } else if (reason === 'TRANSCRIPTION') {
+        text = "⚡ <b>Speed Limit!</b><br>You are typing linearly without pausing. Are you recalling this from memory? <br><b>Quick Quiz:</b> What is the edge case for N=0 here?";
+      }
+
+      msg.innerHTML = text;
+      chatBody.appendChild(msg);
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+  };
 
   initPracticeView();
   console.log('[Main] initApp body execution complete');

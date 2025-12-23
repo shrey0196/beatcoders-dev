@@ -178,7 +178,28 @@ async def analyze_submission(submission_id: str, code: str, language: str, probl
         feedback_gen = FeedbackGenerator()
         
         analysis = analyzer.analyze(code, language)
+        print(f"[DEBUG] Submission {submission_id} Problem {problem_id}")
+        print(f"[DEBUG] Analysis: Time={analysis.time_complexity} Space={analysis.space_complexity}")
+        
         feedback = feedback_gen.generate_feedback(analysis, problem_id, user_tier)
+        analysis = analyzer.analyze(code, language)
+        feedback = feedback_gen.generate_feedback(analysis, problem_id, user_tier)
+        
+        # FORCE OVERRIDE for Unicode Complexity (O(n²))
+        t_comp = str(analysis.time_complexity)
+        
+        # DEBUG: Log everything to stderr
+        import sys
+        sys.stderr.write(f"\n[Submissions] Analyzing Code:\n{code[:100]!r}\n")
+        sys.stderr.write(f"[Submissions] Detected Time: {t_comp}\n")
+        sys.stderr.flush()
+
+        if "²" in t_comp or "n^2" in t_comp or "³" in t_comp:
+            feedback.tier = "improvable"
+            feedback.message = f"Found: {t_comp}. This is likely a nested loop."
+            feedback.title = "Optimization Needed"
+            feedback.icon = "💡"
+            feedback.show_celebration = False
         
         # Calculate points
         points = 50 # Base points
@@ -186,14 +207,16 @@ async def analyze_submission(submission_id: str, code: str, language: str, probl
             points = 100
         elif feedback.tier == "good":
             points = 80
+            
+        print(f"[Submissions] Final Tier: {feedback.tier} Time: {t_comp}", flush=True)
         
         return AnalysisResult(
             submission_id=submission_id,
-            time_complexity=analysis.time_complexity,
+            time_complexity=t_comp,
             space_complexity=analysis.space_complexity,
             is_optimal=(feedback.tier == "optimal"),
             feedback_tier=feedback.tier,
-            feedback_message=f"✅ All {execution_result.tests_total} test cases passed!\n\n{feedback.message}",
+            feedback_message=feedback.message,  # Use overridden message
             feedback_title=feedback.title,
             feedback_icon=feedback.icon,
             hints=feedback.hints,

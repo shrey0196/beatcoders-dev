@@ -50,59 +50,82 @@ class AdaptiveIDE {
      * Create Focus Mode toggle button in the editor navbar
      */
     createFocusModeButton() {
-        // Try to find the editor navbar or modal header
         let container = document.getElementById('editor-navbar');
-        let insertBeforeNode = null;
 
-        // Fallback: Target the Code Editor Modal Header
+        // Fallback: Target the Code Editor Modal Header if navbar not found
         if (!container) {
             const modal = document.getElementById('code-editor-modal');
             if (modal) {
                 container = modal.querySelector('.modal-header');
-                // Insert before the close button
-                insertBeforeNode = container ? container.querySelector('.modal-close-btn') : null;
             }
         }
 
-        if (!container) {
-            console.log('[AdaptiveIDE] Could not find editor container to attach Focus Button');
-            return;
+        if (!container) return;
+
+        // 1. Create OR Finding Center Container
+        let centerContainer = document.getElementById('navbar-center-controls');
+        if (!centerContainer) {
+            centerContainer = document.createElement('div');
+            centerContainer.id = 'navbar-center-controls';
+            centerContainer.style.cssText = `
+                flex: 1; 
+                display: flex; 
+                justify-content: center; 
+                align-items: center; 
+                gap: 15px;
+            `;
+
+            // Insert after title (first child) and before buttons (last child)
+            if (container.children.length > 1) {
+                container.insertBefore(centerContainer, container.children[1]);
+            } else {
+                container.appendChild(centerContainer);
+            }
         }
 
-        // Check if button already exists
-        if (document.getElementById('focus-mode-toggle')) return;
+        // 2. Create Cognitive State Badge
+        if (!document.getElementById('cognitive-state-badge')) {
+            const stateBadge = document.createElement('div');
+            stateBadge.id = 'cognitive-state-badge';
+            stateBadge.innerHTML = '🔵 Balanced';
+            stateBadge.style.cssText = `
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                padding: 6px 14px;
+                background: rgba(59, 130, 246, 0.1);
+                color: #60a5fa;
+                border: 1px solid rgba(59, 130, 246, 0.2);
+                border-radius: 20px;
+                font-size: 0.85rem;
+                font-weight: 500;
+                transition: all 0.3s ease;
+            `;
+            centerContainer.appendChild(stateBadge);
+        }
 
-        const focusBtn = document.createElement('button');
-        focusBtn.id = 'focus-mode-toggle';
-        focusBtn.className = 'focus-mode-btn';
-        focusBtn.innerHTML = '🎯 Focus Mode';
-        focusBtn.style.cssText = `
-            padding: 6px 14px;
-            background: rgba(168, 85, 247, 0.2);
-            color: #a855f7;
-            border: 1px solid rgba(168, 85, 247, 0.4);
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            margin-left: auto;
-            margin-right: 10px; /* Add spacing from close button */
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.9rem;
-        `;
-
-        focusBtn.addEventListener('click', () => this.toggleFocusMode());
-
-        // Insert into the button container (right side of navbar)
-        const buttonContainer = document.querySelector('#editor-navbar > div:last-child');
-        if (buttonContainer) {
-            buttonContainer.insertBefore(focusBtn, buttonContainer.firstChild);
-        } else if (insertBeforeNode) {
-            container.insertBefore(focusBtn, insertBeforeNode);
-        } else {
-            container.appendChild(focusBtn);
+        // 3. Create Focus Mode Button
+        if (!document.getElementById('focus-mode-toggle')) {
+            const focusBtn = document.createElement('button');
+            focusBtn.id = 'focus-mode-toggle';
+            focusBtn.className = 'focus-mode-btn';
+            focusBtn.innerHTML = '🎯 Focus Mode';
+            focusBtn.style.cssText = `
+                padding: 6px 16px;
+                background: rgba(168, 85, 247, 0.1);
+                color: #a855f7;
+                border: 1px solid rgba(168, 85, 247, 0.3);
+                border-radius: 20px;
+                cursor: pointer;
+                font-weight: 500;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 0.85rem;
+            `;
+            focusBtn.addEventListener('click', () => this.toggleFocusMode());
+            centerContainer.appendChild(focusBtn);
         }
     }
 
@@ -227,6 +250,32 @@ class AdaptiveIDE {
 
         const { states } = analysis;
         this.currentState = states;
+
+        // Update Cognitive Badge
+        const badge = document.getElementById('cognitive-state-badge');
+        if (badge) {
+            let type = analysis.fingerprint?.type || 'Balanced';
+            let color = '#60a5fa'; // Blue
+            let bg = 'rgba(59, 130, 246, 0.1)';
+            let icon = '🔵';
+
+            if (type === 'Source Detected') {
+                icon = '🟣'; color = '#a855f7'; bg = 'rgba(168, 85, 247, 0.1)';
+            } else if (type === 'Transcriber') {
+                icon = '⚡'; color = '#facc15'; bg = 'rgba(250, 204, 21, 0.1)';
+            } else if (states.focus > 0.8) {
+                type = 'Flow State';
+                icon = '🟢'; color = '#22c55e'; bg = 'rgba(34, 197, 94, 0.1)';
+            } else if (analysis.metrics?.variance > 5000) {
+                type = 'Thinking';
+                icon = '🤔'; color = '#f472b6'; bg = 'rgba(244, 114, 182, 0.1)';
+            }
+
+            badge.innerHTML = `${icon} ${type}`;
+            badge.style.color = color;
+            badge.style.borderColor = color;
+            badge.style.background = bg;
+        }
 
         // Auto-activate Focus Mode if struggling (High Frustration or Anger)
         const frustrationLevel = states.frustration || 0;

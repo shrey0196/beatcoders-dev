@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6c39dabe-5f2e-49dc-b066-1a9e42abd9f5" name="Changes" comment="solved filter issue">
-      <change beforePath="$PROJECT_DIR$/backend/test_cases/hidden_tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/test_cases/hidden_tests.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/problems_db.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/problems_db.js" afterDir="false" />
-    </list>
+    <list default="true" id="6c39dabe-5f2e-49dc-b066-1a9e42abd9f5" name="Changes" comment="code optimization, updated leaderboard" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -159,7 +156,15 @@
       <option name="project" value="LOCAL" />
       <updated>1766413372283</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="code optimization, updated leaderboard">
+      <option name="closed" value="true" />
+      <created>1766487310457</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1766487310457</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -177,6 +182,7 @@
     <MESSAGE value="added filter button and checkbox" />
     <MESSAGE value="added career hub" />
     <MESSAGE value="solved filter issue" />
-    <option name="LAST_COMMIT_MESSAGE" value="solved filter issue" />
+    <MESSAGE value="code optimization, updated leaderboard" />
+    <option name="LAST_COMMIT_MESSAGE" value="code optimization, updated leaderboard" />
   </component>
 </project>

@@ -5,7 +5,7 @@ Enhanced with positive framing and edge case handling
 """
 from typing import Dict, List, Optional
 from dataclasses import dataclass
-from analyzers.complexity_analyzer import ComplexityAnalysis
+from analyzers.complexity_analyzer import ComplexityAnalyzer
 
 @dataclass
 class Feedback:

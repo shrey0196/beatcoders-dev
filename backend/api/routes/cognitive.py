@@ -84,6 +84,14 @@ def analyze_session(task_id: str, db: Session = Depends(get_db)):
     # Run analysis
     analysis = heuristics_engine.analyze_session(all_signals)
     
+    # Advanced Cognitive Mirror Analysis
+    from analyzers.cognitive_mirror import CognitiveMirror
+    mirror_engine = CognitiveMirror()
+    mirror_analysis = mirror_engine.analyze_session(all_signals)
+    
+    # Merge results
+    analysis['fingerprint'] = mirror_analysis # Override or add fingerprint
+    
     return {
         "task_id": task_id,
         "signal_count": len(all_signals),

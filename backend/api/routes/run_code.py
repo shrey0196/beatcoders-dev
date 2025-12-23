@@ -188,6 +188,9 @@ async def run_code(request: RunCodeRequest):
 
 @router.post("/api/submit-code", response_model=SubmitCodeResponse)
 async def submit_code(request: SubmitCodeRequest, db: Session = Depends(get_db)):
+    sys.stderr.write(f"[RunCode] Submit HIT! Algo: {request.language}\n")
+    sys.stderr.write(f"Code Snippet: {request.code[:100]!r}\n")
+    sys.stderr.flush()
     """
     Execute code against all test cases (visible + hidden)
     """
@@ -251,16 +254,26 @@ async def submit_code(request: SubmitCodeRequest, db: Session = Depends(get_db))
             space_comp = analysis.get("space", "N/A")
             
             # Determine tier based on complexity
-            if "n^2" in time_comp or "n^3" in time_comp:
+            # Determine tier based on complexity
+            sys.stderr.write(f"[RunCode] Complexity Analysis: Time={time_comp} Space={space_comp}\n")
+            sys.stderr.flush()
+
+            # Check for O(n^2) or O(n^3) - handling both ASCII and Unicode
+            if any(x in time_comp for x in ["n^2", "n²", "n^3", "n³"]):
                 tier = "improvable"
                 points = 60
+                is_optimal = False
             elif "log" in time_comp or time_comp == "O(n)":
-                tier = "good"
-                points = 80
+                tier = "optimal" # Consider O(n) optimal for most easy/medium problems
+                points = 100
+                is_optimal = True
             elif time_comp == "O(1)":
                 tier = "optimal"
                 points = 100
                 is_optimal = True
+            else:
+                # Default for O(n!) or unknown
+                 tier = "improvable"
             
         except Exception as e:
             print(f"Analysis failed: {e}")
@@ -292,10 +305,12 @@ async def submit_code(request: SubmitCodeRequest, db: Session = Depends(get_db))
                     points=points if all_passed else 0
                 )
                 db.add(new_submission)
+                db.add(new_submission)
                 db.commit()
-                print(f"Saved submission for user {request.userId}, problem {request.problemId}, status {status}")
+                # Debugging Log that we know works:
+                print(f"Saved sub: User={request.userId} Prob={request.problemId} Stat={status} Time={time_comp} Tier={tier} Optimal={is_optimal}", flush=True)
             except Exception as e:
-                print(f"Error saving submission: {e}")
+                print(f"Error saving submission: {e}", flush=True)
                 traceback.print_exc()
 
         return SubmitCodeResponse(
