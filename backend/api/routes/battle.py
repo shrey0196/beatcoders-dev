@@ -1,4 +1,4 @@
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends
 from typing import List, Dict, Any
 import json
 import uuid
@@ -12,7 +12,8 @@ OPEN_SLOT = "__OPEN__"
 from api.routes.run_code import execute_python_code
 from api.routes.run_code import execute_python_code
 from test_cases.hidden_tests import get_hidden_tests
-from config.database import SessionLocal
+from config.database import SessionLocal, get_db
+from sqlalchemy.orm import Session
 from models.user import User
 from sqlalchemy import desc
 from utils.cache import leaderboard_cache
@@ -447,13 +448,44 @@ async def get_active_users():
     return {"users": lobby_users}
 
 @router.get("/api/battle/leaderboard")
-def get_leaderboard():
-    # Check Cache
-    cached = leaderboard_cache.get("top_10")
-    if cached:
-        return cached
+def get_leaderboard(type: str = "global", user_id: str = "guest", db: Session = Depends(get_db)):
+    # Check Cache for GLOBAL only
+    if type == "global":
+        cached = leaderboard_cache.get("top_10")
+        if cached:
+            return cached
 
-    db = SessionLocal()
+    # If friends, we need user object
+    if type == "friends":
+        if user_id == "guest":
+             return {"leaderboard": []}
+             
+        # Resolve real user object
+        user = db.query(User).filter(User.user_id == user_id).first()
+        if not user:
+             # Try username
+             user = db.query(User).filter(User.username == user_id).first()
+        
+        if not user:
+            return {"leaderboard": []}
+            
+        # Get friends and include self
+        friends = user.friends
+        all_participants = list(friends) + [user]
+        
+        # Sort by rating
+        sorted_friends = sorted(all_participants, key=lambda u: u.elo_rating or 0, reverse=True)
+        top_users = sorted_friends[:10] # Top 10 among friends
+        
+        result = {
+            "leaderboard": [
+                {"rank": i+1, "username": u.username or "Unknown", "rating": u.elo_rating}
+                for i, u in enumerate(top_users)
+            ]
+        }
+        return result
+
+    # Global Fallback
     try:
         # Get top 10 users by Elo
         top_users = db.query(User).filter(User.elo_rating != None).order_by(desc(User.elo_rating)).limit(10).all()
@@ -464,10 +496,12 @@ def get_leaderboard():
             ]
         }
         # Set Cache
-        leaderboard_cache.set("top_10", result)
+        if type == "global":
+            leaderboard_cache.set("top_10", result)
         return result
-    finally:
-        db.close()
+    except Exception as e:
+        print(f"Error fetching leaderboard: {e}")
+        return {"leaderboard": []}
 
 # --- Lobby System ---
 class LobbyManager:
