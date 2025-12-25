@@ -11,6 +11,8 @@ import string
 import re
 from datetime import datetime, timedelta
 
+import hashlib
+
 router = APIRouter()
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -60,11 +62,23 @@ def generate_user_id(email: str) -> str:
     random_suffix = ''.join(random.choices(string.digits, k=3))
     return f"{sanitized}{random_suffix}"
 
+
+
 def verify_password(plain_password, hashed_password):
+    # Try verifying with SHA-256 pre-hashing (new method)
+    # We hex-digest the password first to ensure it's always <= 64 chars
+    sha256_password = hashlib.sha256(plain_password.encode()).hexdigest()
+    if pwd_context.verify(sha256_password, hashed_password):
+        return True
+    
+    # Fallback: Try verifying raw password (legacy)
+    # This handles existing users who have plain bcrypt hashes
     return pwd_context.verify(plain_password, hashed_password)
 
 def get_password_hash(password):
-    return pwd_context.hash(password)
+    # Always pre-hash with SHA-256 to support unlimited length
+    sha256_password = hashlib.sha256(password.encode()).hexdigest()
+    return pwd_context.hash(sha256_password)
 
 @router.post("/register", response_model=UserResponse)
 def register(user: UserCreate, db: Session = Depends(get_db)):
